@@ -1,0 +1,321 @@
+{
+  "dynatrace": "1",
+  "schemaId": "builtin:span-context-propagation",
+  "displayName": "Span context propagation",
+  "description": "Context propagation enables you to connect PurePaths through OpenTelemetry/OpenTracing. Define rules to enable context propagation for certain spans within OneAgent.\n\nNote: This config does not apply to Trace ingest.",
+  "documentation": "",
+  "version": "0.1.14",
+  "multiObject": true,
+  "ordered": true,
+  "maxObjects": 100,
+  "allowedScopes": [
+    "environment"
+  ],
+  "enums": {
+    "SpanKind": {
+      "displayName": "SpanKind",
+      "description": "",
+      "documentation": "",
+      "items": [
+        {
+          "value": "INTERNAL",
+          "displayName": "Internal"
+        },
+        {
+          "value": "SERVER",
+          "displayName": "Server"
+        },
+        {
+          "value": "CLIENT",
+          "displayName": "Client"
+        },
+        {
+          "value": "PRODUCER",
+          "displayName": "Producer"
+        },
+        {
+          "value": "CONSUMER",
+          "displayName": "Consumer"
+        }
+      ],
+      "type": "enum"
+    },
+    "SpanMatcherType": {
+      "displayName": "SpanMatcherType",
+      "description": "",
+      "documentation": "",
+      "items": [
+        {
+          "value": "EQUALS",
+          "displayName": "Equals"
+        },
+        {
+          "value": "CONTAINS",
+          "displayName": "Contains"
+        },
+        {
+          "value": "STARTS_WITH",
+          "displayName": "Starts with"
+        },
+        {
+          "value": "ENDS_WITH",
+          "displayName": "Ends with"
+        },
+        {
+          "value": "DOES_NOT_EQUAL",
+          "displayName": "Does not equal"
+        },
+        {
+          "value": "DOES_NOT_CONTAIN",
+          "displayName": "Does not contain"
+        },
+        {
+          "value": "DOES_NOT_START_WITH",
+          "displayName": "Does not start with"
+        },
+        {
+          "value": "DOES_NOT_END_WITH",
+          "displayName": "Does not end with"
+        }
+      ],
+      "type": "enum"
+    },
+    "SpanMatcherSource": {
+      "displayName": "SpanMatcherSource",
+      "description": "",
+      "documentation": "",
+      "items": [
+        {
+          "value": "SPAN_NAME",
+          "displayName": "Span name"
+        },
+        {
+          "value": "SPAN_KIND",
+          "displayName": "Span kind"
+        },
+        {
+          "value": "ATTRIBUTE",
+          "displayName": "Attribute"
+        },
+        {
+          "value": "INSTRUMENTATION_LIBRARY_NAME",
+          "displayName": "Instrumentation library name"
+        },
+        {
+          "value": "INSTRUMENTATION_LIBRARY_VERSION",
+          "displayName": "Instrumentation library version"
+        }
+      ],
+      "type": "enum"
+    },
+    "SpanContextPropagationAction": {
+      "displayName": "SpanContextPropagationAction",
+      "description": "",
+      "documentation": "",
+      "items": [
+        {
+          "value": "PROPAGATE",
+          "displayName": "Propagate"
+        },
+        {
+          "value": "DONT_PROPAGATE",
+          "displayName": "Do not propagate"
+        }
+      ],
+      "type": "enum"
+    }
+  },
+  "types": {
+    "SpanMatcher": {
+      "version": "0.0.1",
+      "versionInfo": "",
+      "displayName": "SpanMatcher",
+      "summaryPattern": "{source} {sourceKey} {type} {value}{spanKindValue}",
+      "description": "",
+      "documentation": "",
+      "properties": {
+        "source": {
+          "displayName": "Source",
+          "description": "",
+          "documentation": "",
+          "type": {
+            "$ref": "#/enums/SpanMatcherSource"
+          },
+          "nullable": false,
+          "maxObjects": 1,
+          "default": "SPAN_NAME"
+        },
+        "sourceKey": {
+          "displayName": "Key",
+          "description": "",
+          "documentation": "",
+          "type": "text",
+          "nullable": false,
+          "constraints": [
+            {
+              "type": "NOT_EMPTY"
+            },
+            {
+              "type": "LENGTH",
+              "maxLength": 500,
+              "minLength": 1
+            }
+          ],
+          "precondition": {
+            "type": "EQUALS",
+            "property": "source",
+            "expectedValue": "ATTRIBUTE"
+          },
+          "maxObjects": 1,
+          "default": ""
+        },
+        "type": {
+          "displayName": "Comparison Type",
+          "description": "affects value",
+          "documentation": "",
+          "type": {
+            "$ref": "#/enums/SpanMatcherType"
+          },
+          "nullable": false,
+          "maxObjects": 1,
+          "default": "EQUALS"
+        },
+        "value": {
+          "displayName": "Value",
+          "description": "evaluated at context injection",
+          "documentation": "",
+          "type": "text",
+          "nullable": false,
+          "constraints": [
+            {
+              "type": "LENGTH"
+            }
+          ],
+          "precondition": {
+            "type": "NOT",
+            "precondition": {
+              "type": "EQUALS",
+              "property": "source",
+              "expectedValue": "SPAN_KIND"
+            }
+          },
+          "maxObjects": 1,
+          "default": ""
+        },
+        "spanKindValue": {
+          "displayName": "Value",
+          "description": "",
+          "documentation": "",
+          "type": {
+            "$ref": "#/enums/SpanKind"
+          },
+          "nullable": false,
+          "precondition": {
+            "type": "EQUALS",
+            "property": "source",
+            "expectedValue": "SPAN_KIND"
+          },
+          "maxObjects": 1,
+          "default": "INTERNAL"
+        },
+        "caseSensitive": {
+          "displayName": "Case sensitive",
+          "description": "affects value and key",
+          "documentation": "",
+          "type": "boolean",
+          "nullable": false,
+          "precondition": {
+            "type": "NOT",
+            "precondition": {
+              "type": "EQUALS",
+              "property": "source",
+              "expectedValue": "SPAN_KIND"
+            }
+          },
+          "maxObjects": 1,
+          "default": false
+        }
+      },
+      "type": "object"
+    },
+    "SpanContextPropagationRule": {
+      "version": "0.0.1",
+      "versionInfo": "",
+      "displayName": "Context propagation rule",
+      "summaryPattern": "",
+      "description": "",
+      "documentation": "",
+      "properties": {
+        "ruleName": {
+          "displayName": "Rule name",
+          "description": "",
+          "documentation": "",
+          "type": "text",
+          "nullable": false,
+          "constraints": [
+            {
+              "type": "LENGTH",
+              "maxLength": 500,
+              "minLength": 1
+            }
+          ],
+          "maxObjects": 1,
+          "default": ""
+        },
+        "ruleAction": {
+          "displayName": "Rule action",
+          "description": "",
+          "documentation": "",
+          "type": {
+            "$ref": "#/enums/SpanContextPropagationAction"
+          },
+          "nullable": false,
+          "maxObjects": 1,
+          "default": "PROPAGATE"
+        },
+        "matchers": {
+          "displayName": "Matchers",
+          "description": "",
+          "documentation": "",
+          "type": "list",
+          "items": {
+            "displayName": "",
+            "description": "",
+            "documentation": "",
+            "type": {
+              "$ref": "#/types/SpanMatcher"
+            }
+          },
+          "nullable": false,
+          "minObjects": 1,
+          "maxObjects": 100
+        }
+      },
+      "constraints": [
+        {
+          "type": "CUSTOM_VALIDATOR_REF",
+          "customMessage": "Span kind supports only 'Equals' & 'Does not equal' comparison types",
+          "customValidatorId": "span-kind-comparison-type-validator"
+        },
+        {
+          "type": "CUSTOM_VALIDATOR_REF",
+          "customMessage": "Only ASCII characters are allowed",
+          "customValidatorId": "ascii-character-validator"
+        }
+      ],
+      "type": "object"
+    }
+  },
+  "properties": {
+    "contextPropagationRule": {
+      "displayName": "Context Propagation Rule",
+      "description": "",
+      "documentation": "",
+      "type": {
+        "$ref": "#/types/SpanContextPropagationRule"
+      },
+      "nullable": false,
+      "maxObjects": 1
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "dynatrace": "1",
+  "schemaId": "builtin:resource-attribute",
+  "displayName": "Resource attributes",
+  "description": "While Dynatrace automatically captures all OpenTracing and OpenTelemetry resource attributes, to prevent the accidental storage of personal data, only the values of resource attributes for which a related key is specified in the allow-list below are stored. This enables you to meet your privacy requirements while controlling the amount of monitoring data that's stored.",
+  "documentation": "",
+  "version": "0.0.1",
+  "multiObject": false,
+  "maxObjects": 1,
+  "allowedScopes": [
+    "environment"
+  ],
+  "enums": {},
+  "types": {
+    "RuleItem": {
+      "version": "0",
+      "versionInfo": "",
+      "displayName": "Rule",
+      "summaryPattern": "{attributeKey}",
+      "description": "",
+      "documentation": "",
+      "properties": {
+        "enabled": {
+          "displayName": "Enabled",
+          "description": "If this is true, the value of the specified key is stored.",
+          "documentation": "",
+          "type": "boolean",
+          "nullable": false,
+          "maxObjects": 1,
+          "default": true
+        },
+        "attributeKey": {
+          "displayName": "Attribute key",
+          "description": "",
+          "documentation": "",
+          "type": "text",
+          "nullable": false,
+          "constraints": [
+            {
+              "type": "NOT_EMPTY"
+            },
+            {
+              "type": "LENGTH",
+              "maxLength": 100,
+              "minLength": 1
+            }
+          ],
+          "maxObjects": 1,
+          "default": ""
+        }
+      },
+      "type": "object"
+    }
+  },
+  "properties": {
+    "attributeKeys": {
+      "displayName": "Attribute key allow-list",
+      "description": "",
+      "documentation": "",
+      "type": "set",
+      "items": {
+        "displayName": "",
+        "description": "",
+        "documentation": "",
+        "type": {
+          "$ref": "#/types/RuleItem"
+        }
+      },
+      "nullable": false,
+      "constraints": [
+        {
+          "type": "UNIQUE",
+          "customMessage": "Attribute keys must be unique.",
+          "uniqueProperties": [
+            "attributeKey"
+          ]
+        }
+      ],
+      "minObjects": 0,
+      "maxObjects": 100
+    }
+  }
+}

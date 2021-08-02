@@ -27,7 +27,7 @@ import (
 	"sync"
 	"time"
 
-	dynatrace "github.com/dynatrace/terraform-provider-dynatrace/dynatrace"
+	dynatrace "github.com/dynatrace-oss/terraform-provider-dynatrace/provider"
 	"github.com/gobuffalo/flect"
 	auditlib "go.bytebuilders.dev/audit/lib"
 	arv1 "k8s.io/api/admissionregistration/v1"
@@ -39,29 +39,53 @@ import (
 	admissionregistrationv1 "k8s.io/client-go/kubernetes/typed/admissionregistration/v1"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/klog/v2"
-	dnsv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/dns/v1alpha1"
-	firewallv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/firewall/v1alpha1"
-	instancev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/instance/v1alpha1"
-	kubernetesv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/kubernetes/v1alpha1"
-	loadbalancerv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/loadbalancer/v1alpha1"
-	networkv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/network/v1alpha1"
-	snapshotv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/snapshot/v1alpha1"
-	sshv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/ssh/v1alpha1"
-	templatev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/template/v1alpha1"
-	volumev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/volume/v1alpha1"
-	controllersdns "kubeform.dev/provider-dynatrace-controller/controllers/dns"
-	controllersfirewall "kubeform.dev/provider-dynatrace-controller/controllers/firewall"
-	controllersinstance "kubeform.dev/provider-dynatrace-controller/controllers/instance"
-	controllerskubernetes "kubeform.dev/provider-dynatrace-controller/controllers/kubernetes"
-	controllersloadbalancer "kubeform.dev/provider-dynatrace-controller/controllers/loadbalancer"
-	controllersnetwork "kubeform.dev/provider-dynatrace-controller/controllers/network"
-	controllerssnapshot "kubeform.dev/provider-dynatrace-controller/controllers/snapshot"
-	controllersssh "kubeform.dev/provider-dynatrace-controller/controllers/ssh"
-	controllerstemplate "kubeform.dev/provider-dynatrace-controller/controllers/template"
-	controllersvolume "kubeform.dev/provider-dynatrace-controller/controllers/volume"
+	alertingv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/alerting/v1alpha1"
+	applicationv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/application/v1alpha1"
+	autotagv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/autotag/v1alpha1"
+	awsv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/aws/v1alpha1"
+	azurev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/azure/v1alpha1"
+	calculatedv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/calculated/v1alpha1"
+	customv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/custom/v1alpha1"
+	dashboardv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/dashboard/v1alpha1"
+	databasev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/database/v1alpha1"
+	diskv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/disk/v1alpha1"
+	hostv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/host/v1alpha1"
+	k8sv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/k8s/v1alpha1"
+	maintenancev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/maintenance/v1alpha1"
+	managementv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/management/v1alpha1"
+	notificationv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/notification/v1alpha1"
+	processgroupv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/processgroup/v1alpha1"
+	requestv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/request/v1alpha1"
+	resourcev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/resource/v1alpha1"
+	servicev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/service/v1alpha1"
+	slov1alpha1 "kubeform.dev/provider-dynatrace-api/apis/slo/v1alpha1"
+	spanv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/span/v1alpha1"
+	controllersalerting "kubeform.dev/provider-dynatrace-controller/controllers/alerting"
+	controllersapplication "kubeform.dev/provider-dynatrace-controller/controllers/application"
+	controllersautotag "kubeform.dev/provider-dynatrace-controller/controllers/autotag"
+	controllersaws "kubeform.dev/provider-dynatrace-controller/controllers/aws"
+	controllersazure "kubeform.dev/provider-dynatrace-controller/controllers/azure"
+	controllerscalculated "kubeform.dev/provider-dynatrace-controller/controllers/calculated"
+	controllerscustom "kubeform.dev/provider-dynatrace-controller/controllers/custom"
+	controllersdashboard "kubeform.dev/provider-dynatrace-controller/controllers/dashboard"
+	controllersdatabase "kubeform.dev/provider-dynatrace-controller/controllers/database"
+	controllersdisk "kubeform.dev/provider-dynatrace-controller/controllers/disk"
+	controllershost "kubeform.dev/provider-dynatrace-controller/controllers/host"
+	controllersk8s "kubeform.dev/provider-dynatrace-controller/controllers/k8s"
+	controllersmaintenance "kubeform.dev/provider-dynatrace-controller/controllers/maintenance"
+	controllersmanagement "kubeform.dev/provider-dynatrace-controller/controllers/management"
+	controllersnotification "kubeform.dev/provider-dynatrace-controller/controllers/notification"
+	controllersprocessgroup "kubeform.dev/provider-dynatrace-controller/controllers/processgroup"
+	controllersrequest "kubeform.dev/provider-dynatrace-controller/controllers/request"
+	controllersresource "kubeform.dev/provider-dynatrace-controller/controllers/resource"
+	controllersservice "kubeform.dev/provider-dynatrace-controller/controllers/service"
+	controllersslo "kubeform.dev/provider-dynatrace-controller/controllers/slo"
+	controllersspan "kubeform.dev/provider-dynatrace-controller/controllers/span"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 )
+
+var _provider = dynatrace.Provider()
 
 var runningControllers = struct {
 	sync.RWMutex
@@ -243,255 +267,471 @@ func updateVWC(vwcClient *admissionregistrationv1.AdmissionregistrationV1Client,
 func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVersionKind, auditor *auditlib.EventPublisher, watchOnlyDefault bool) error {
 	switch gvk {
 	case schema.GroupVersionKind{
-		Group:   "dns.dynatrace.kubeform.com",
+		Group:   "alerting.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "DomainName",
+		Kind:    "Profile",
 	}:
-		if err := (&controllersdns.DomainNameReconciler{
+		if err := (&controllersalerting.ProfileReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("DomainName"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Profile"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_dns_domain_name"],
-			TypeName:         "dynatrace_dns_domain_name",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_alerting_profile"],
+			TypeName:         "dynatrace_alerting_profile",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "DomainName")
+			setupLog.Error(err, "unable to create controller", "controller", "Profile")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "dns.dynatrace.kubeform.com",
+		Group:   "application.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "DomainRecord",
+		Kind:    "Anomalies",
 	}:
-		if err := (&controllersdns.DomainRecordReconciler{
+		if err := (&controllersapplication.AnomaliesReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("DomainRecord"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Anomalies"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_dns_domain_record"],
-			TypeName:         "dynatrace_dns_domain_record",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_application_anomalies"],
+			TypeName:         "dynatrace_application_anomalies",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "DomainRecord")
+			setupLog.Error(err, "unable to create controller", "controller", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "firewall.dynatrace.kubeform.com",
+		Group:   "autotag.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Firewall",
+		Kind:    "Autotag",
 	}:
-		if err := (&controllersfirewall.FirewallReconciler{
+		if err := (&controllersautotag.AutotagReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Firewall"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Autotag"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_firewall"],
-			TypeName:         "dynatrace_firewall",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_autotag"],
+			TypeName:         "dynatrace_autotag",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Firewall")
+			setupLog.Error(err, "unable to create controller", "controller", "Autotag")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "firewall.dynatrace.kubeform.com",
+		Group:   "aws.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Rule",
+		Kind:    "Credentials",
 	}:
-		if err := (&controllersfirewall.RuleReconciler{
+		if err := (&controllersaws.CredentialsReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Rule"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Credentials"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_firewall_rule"],
-			TypeName:         "dynatrace_firewall_rule",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_aws_credentials"],
+			TypeName:         "dynatrace_aws_credentials",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Rule")
+			setupLog.Error(err, "unable to create controller", "controller", "Credentials")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "instance.dynatrace.kubeform.com",
+		Group:   "azure.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Instance",
+		Kind:    "Credentials",
 	}:
-		if err := (&controllersinstance.InstanceReconciler{
+		if err := (&controllersazure.CredentialsReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Instance"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Credentials"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_instance"],
-			TypeName:         "dynatrace_instance",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_azure_credentials"],
+			TypeName:         "dynatrace_azure_credentials",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Instance")
+			setupLog.Error(err, "unable to create controller", "controller", "Credentials")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "kubernetes.dynatrace.kubeform.com",
+		Group:   "calculated.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Cluster",
+		Kind:    "ServiceMetric",
 	}:
-		if err := (&controllerskubernetes.ClusterReconciler{
+		if err := (&controllerscalculated.ServiceMetricReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Cluster"),
+			Log:              ctrl.Log.WithName("controllers").WithName("ServiceMetric"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_kubernetes_cluster"],
-			TypeName:         "dynatrace_kubernetes_cluster",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_calculated_service_metric"],
+			TypeName:         "dynatrace_calculated_service_metric",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Cluster")
+			setupLog.Error(err, "unable to create controller", "controller", "ServiceMetric")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "kubernetes.dynatrace.kubeform.com",
+		Group:   "custom.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "NodePool",
+		Kind:    "Anomalies",
 	}:
-		if err := (&controllerskubernetes.NodePoolReconciler{
+		if err := (&controllerscustom.AnomaliesReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("NodePool"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Anomalies"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_kubernetes_node_pool"],
-			TypeName:         "dynatrace_kubernetes_node_pool",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_custom_anomalies"],
+			TypeName:         "dynatrace_custom_anomalies",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "NodePool")
+			setupLog.Error(err, "unable to create controller", "controller", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "loadbalancer.dynatrace.kubeform.com",
+		Group:   "custom.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Loadbalancer",
+		Kind:    "Service",
 	}:
-		if err := (&controllersloadbalancer.LoadbalancerReconciler{
+		if err := (&controllerscustom.ServiceReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Loadbalancer"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Service"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_loadbalancer"],
-			TypeName:         "dynatrace_loadbalancer",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_custom_service"],
+			TypeName:         "dynatrace_custom_service",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Loadbalancer")
+			setupLog.Error(err, "unable to create controller", "controller", "Service")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "network.dynatrace.kubeform.com",
+		Group:   "dashboard.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Network",
+		Kind:    "Dashboard",
 	}:
-		if err := (&controllersnetwork.NetworkReconciler{
+		if err := (&controllersdashboard.DashboardReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Network"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Dashboard"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_network"],
-			TypeName:         "dynatrace_network",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_dashboard"],
+			TypeName:         "dynatrace_dashboard",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Network")
+			setupLog.Error(err, "unable to create controller", "controller", "Dashboard")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "snapshot.dynatrace.kubeform.com",
+		Group:   "database.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Snapshot",
+		Kind:    "Anomalies",
 	}:
-		if err := (&controllerssnapshot.SnapshotReconciler{
+		if err := (&controllersdatabase.AnomaliesReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Snapshot"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Anomalies"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_snapshot"],
-			TypeName:         "dynatrace_snapshot",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_database_anomalies"],
+			TypeName:         "dynatrace_database_anomalies",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Snapshot")
+			setupLog.Error(err, "unable to create controller", "controller", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "ssh.dynatrace.kubeform.com",
+		Group:   "disk.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Key",
+		Kind:    "Anomalies",
 	}:
-		if err := (&controllersssh.KeyReconciler{
+		if err := (&controllersdisk.AnomaliesReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Key"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Anomalies"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_ssh_key"],
-			TypeName:         "dynatrace_ssh_key",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_disk_anomalies"],
+			TypeName:         "dynatrace_disk_anomalies",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Key")
+			setupLog.Error(err, "unable to create controller", "controller", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "template.dynatrace.kubeform.com",
+		Group:   "host.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Template",
+		Kind:    "Anomalies",
 	}:
-		if err := (&controllerstemplate.TemplateReconciler{
+		if err := (&controllershost.AnomaliesReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Template"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Anomalies"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_template"],
-			TypeName:         "dynatrace_template",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_host_anomalies"],
+			TypeName:         "dynatrace_host_anomalies",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Template")
+			setupLog.Error(err, "unable to create controller", "controller", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "volume.dynatrace.kubeform.com",
+		Group:   "host.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Volume",
+		Kind:    "Naming",
 	}:
-		if err := (&controllersvolume.VolumeReconciler{
+		if err := (&controllershost.NamingReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Volume"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Naming"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_volume"],
-			TypeName:         "dynatrace_volume",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_host_naming"],
+			TypeName:         "dynatrace_host_naming",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Volume")
+			setupLog.Error(err, "unable to create controller", "controller", "Naming")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "volume.dynatrace.kubeform.com",
+		Group:   "k8s.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Attachment",
+		Kind:    "Credentials",
 	}:
-		if err := (&controllersvolume.AttachmentReconciler{
+		if err := (&controllersk8s.CredentialsReconciler{
 			Client:           mgr.GetClient(),
-			Log:              ctrl.Log.WithName("controllers").WithName("Attachment"),
+			Log:              ctrl.Log.WithName("controllers").WithName("Credentials"),
 			Scheme:           mgr.GetScheme(),
 			Gvk:              gvk,
-			Provider:         dynatrace.Provider(),
-			Resource:         dynatrace.Provider().ResourcesMap["dynatrace_volume_attachment"],
-			TypeName:         "dynatrace_volume_attachment",
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_k8s_credentials"],
+			TypeName:         "dynatrace_k8s_credentials",
 			WatchOnlyDefault: watchOnlyDefault,
 		}).SetupWithManager(ctx, mgr, auditor); err != nil {
-			setupLog.Error(err, "unable to create controller", "controller", "Attachment")
+			setupLog.Error(err, "unable to create controller", "controller", "Credentials")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "maintenance.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Window",
+	}:
+		if err := (&controllersmaintenance.WindowReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Window"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_maintenance_window"],
+			TypeName:         "dynatrace_maintenance_window",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Window")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "management.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Zone",
+	}:
+		if err := (&controllersmanagement.ZoneReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Zone"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_management_zone"],
+			TypeName:         "dynatrace_management_zone",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Zone")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "notification.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Notification",
+	}:
+		if err := (&controllersnotification.NotificationReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Notification"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_notification"],
+			TypeName:         "dynatrace_notification",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Notification")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "processgroup.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Naming",
+	}:
+		if err := (&controllersprocessgroup.NamingReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Naming"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_processgroup_naming"],
+			TypeName:         "dynatrace_processgroup_naming",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Naming")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "request.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Attribute",
+	}:
+		if err := (&controllersrequest.AttributeReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Attribute"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_request_attribute"],
+			TypeName:         "dynatrace_request_attribute",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Attribute")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "resource.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Attributes",
+	}:
+		if err := (&controllersresource.AttributesReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Attributes"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_resource_attributes"],
+			TypeName:         "dynatrace_resource_attributes",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Attributes")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "service.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Anomalies",
+	}:
+		if err := (&controllersservice.AnomaliesReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Anomalies"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_service_anomalies"],
+			TypeName:         "dynatrace_service_anomalies",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Anomalies")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "service.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Naming",
+	}:
+		if err := (&controllersservice.NamingReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Naming"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_service_naming"],
+			TypeName:         "dynatrace_service_naming",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Naming")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "slo.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Slo",
+	}:
+		if err := (&controllersslo.SloReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("Slo"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_slo"],
+			TypeName:         "dynatrace_slo",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Slo")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "CaptureRule",
+	}:
+		if err := (&controllersspan.CaptureRuleReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("CaptureRule"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_span_capture_rule"],
+			TypeName:         "dynatrace_span_capture_rule",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "CaptureRule")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "ContextPropagation",
+	}:
+		if err := (&controllersspan.ContextPropagationReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("ContextPropagation"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_span_context_propagation"],
+			TypeName:         "dynatrace_span_context_propagation",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "ContextPropagation")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "EntryPoint",
+	}:
+		if err := (&controllersspan.EntryPointReconciler{
+			Client:           mgr.GetClient(),
+			Log:              ctrl.Log.WithName("controllers").WithName("EntryPoint"),
+			Scheme:           mgr.GetScheme(),
+			Gvk:              gvk,
+			Provider:         _provider,
+			Resource:         _provider.ResourcesMap["dynatrace_span_entry_point"],
+			TypeName:         "dynatrace_span_entry_point",
+			WatchOnlyDefault: watchOnlyDefault,
+		}).SetupWithManager(ctx, mgr, auditor); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "EntryPoint")
 			return err
 		}
 
@@ -505,129 +745,237 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 	switch gvk {
 	case schema.GroupVersionKind{
-		Group:   "dns.dynatrace.kubeform.com",
+		Group:   "alerting.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "DomainName",
+		Kind:    "Profile",
 	}:
-		if err := (&dnsv1alpha1.DomainName{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "DomainName")
+		if err := (&alertingv1alpha1.Profile{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Profile")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "dns.dynatrace.kubeform.com",
+		Group:   "application.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "DomainRecord",
+		Kind:    "Anomalies",
 	}:
-		if err := (&dnsv1alpha1.DomainRecord{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "DomainRecord")
+		if err := (&applicationv1alpha1.Anomalies{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "firewall.dynatrace.kubeform.com",
+		Group:   "autotag.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Firewall",
+		Kind:    "Autotag",
 	}:
-		if err := (&firewallv1alpha1.Firewall{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Firewall")
+		if err := (&autotagv1alpha1.Autotag{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Autotag")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "firewall.dynatrace.kubeform.com",
+		Group:   "aws.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Rule",
+		Kind:    "Credentials",
 	}:
-		if err := (&firewallv1alpha1.Rule{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Rule")
+		if err := (&awsv1alpha1.Credentials{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Credentials")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "instance.dynatrace.kubeform.com",
+		Group:   "azure.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Instance",
+		Kind:    "Credentials",
 	}:
-		if err := (&instancev1alpha1.Instance{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Instance")
+		if err := (&azurev1alpha1.Credentials{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Credentials")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "kubernetes.dynatrace.kubeform.com",
+		Group:   "calculated.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Cluster",
+		Kind:    "ServiceMetric",
 	}:
-		if err := (&kubernetesv1alpha1.Cluster{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Cluster")
+		if err := (&calculatedv1alpha1.ServiceMetric{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "ServiceMetric")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "kubernetes.dynatrace.kubeform.com",
+		Group:   "custom.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "NodePool",
+		Kind:    "Anomalies",
 	}:
-		if err := (&kubernetesv1alpha1.NodePool{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "NodePool")
+		if err := (&customv1alpha1.Anomalies{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "loadbalancer.dynatrace.kubeform.com",
+		Group:   "custom.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Loadbalancer",
+		Kind:    "Service",
 	}:
-		if err := (&loadbalancerv1alpha1.Loadbalancer{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Loadbalancer")
+		if err := (&customv1alpha1.Service{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Service")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "network.dynatrace.kubeform.com",
+		Group:   "dashboard.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Network",
+		Kind:    "Dashboard",
 	}:
-		if err := (&networkv1alpha1.Network{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Network")
+		if err := (&dashboardv1alpha1.Dashboard{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Dashboard")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "snapshot.dynatrace.kubeform.com",
+		Group:   "database.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Snapshot",
+		Kind:    "Anomalies",
 	}:
-		if err := (&snapshotv1alpha1.Snapshot{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Snapshot")
+		if err := (&databasev1alpha1.Anomalies{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "ssh.dynatrace.kubeform.com",
+		Group:   "disk.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Key",
+		Kind:    "Anomalies",
 	}:
-		if err := (&sshv1alpha1.Key{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Key")
+		if err := (&diskv1alpha1.Anomalies{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "template.dynatrace.kubeform.com",
+		Group:   "host.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Template",
+		Kind:    "Anomalies",
 	}:
-		if err := (&templatev1alpha1.Template{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Template")
+		if err := (&hostv1alpha1.Anomalies{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Anomalies")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "volume.dynatrace.kubeform.com",
+		Group:   "host.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Volume",
+		Kind:    "Naming",
 	}:
-		if err := (&volumev1alpha1.Volume{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Volume")
+		if err := (&hostv1alpha1.Naming{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Naming")
 			return err
 		}
 	case schema.GroupVersionKind{
-		Group:   "volume.dynatrace.kubeform.com",
+		Group:   "k8s.dynatrace.kubeform.com",
 		Version: "v1alpha1",
-		Kind:    "Attachment",
+		Kind:    "Credentials",
 	}:
-		if err := (&volumev1alpha1.Attachment{}).SetupWebhookWithManager(mgr); err != nil {
-			setupLog.Error(err, "unable to create webhook", "webhook", "Attachment")
+		if err := (&k8sv1alpha1.Credentials{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Credentials")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "maintenance.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Window",
+	}:
+		if err := (&maintenancev1alpha1.Window{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Window")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "management.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Zone",
+	}:
+		if err := (&managementv1alpha1.Zone{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Zone")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "notification.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Notification",
+	}:
+		if err := (&notificationv1alpha1.Notification{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Notification")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "processgroup.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Naming",
+	}:
+		if err := (&processgroupv1alpha1.Naming{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Naming")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "request.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Attribute",
+	}:
+		if err := (&requestv1alpha1.Attribute{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Attribute")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "resource.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Attributes",
+	}:
+		if err := (&resourcev1alpha1.Attributes{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Attributes")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "service.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Anomalies",
+	}:
+		if err := (&servicev1alpha1.Anomalies{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Anomalies")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "service.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Naming",
+	}:
+		if err := (&servicev1alpha1.Naming{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Naming")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "slo.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Slo",
+	}:
+		if err := (&slov1alpha1.Slo{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Slo")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "CaptureRule",
+	}:
+		if err := (&spanv1alpha1.CaptureRule{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "CaptureRule")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "ContextPropagation",
+	}:
+		if err := (&spanv1alpha1.ContextPropagation{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "ContextPropagation")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "EntryPoint",
+	}:
+		if err := (&spanv1alpha1.EntryPoint{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "EntryPoint")
 			return err
 		}
 
