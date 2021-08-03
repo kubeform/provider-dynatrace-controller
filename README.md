@@ -3,7 +3,7 @@
 
 # provider-dynatrace-controller
 
-Kubeform controller for [Terraform Dynatrace Provider](https://github.com/dynatrace/terraform-provider-dynatrace)
+Kubeform controller for [Terraform Dynatrace Provider](https://github.com/dynatrace-oss/terraform-provider-dynatrace)
 
 ## Installation
 
