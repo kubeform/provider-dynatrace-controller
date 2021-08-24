@@ -18,15 +18,15 @@ require (
 	go.bytebuilders.dev/license-verifier v0.9.2
 	go.bytebuilders.dev/license-verifier/kubernetes v0.9.2
 	gomodules.xyz/logs v0.0.3
-	gomodules.xyz/x v0.0.5
+	gomodules.xyz/x v0.0.7
 	k8s.io/api v0.21.1
 	k8s.io/apiextensions-apiserver v0.21.1
 	k8s.io/apimachinery v0.21.1
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
-	kmodules.xyz/client-go v0.0.0-20210617233340-13d22e91512b
+	kmodules.xyz/client-go v0.0.0-20210822203828-5e9cebbf1dfa
 	kubeform.dev/apimachinery v0.0.0-20210629153539-7bcd34a30eb5
-	kubeform.dev/provider-dynatrace-api v0.3.1-0.20210804230344-e4a00420e722
+	kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824075850-0caf9fafccfc
 	sigs.k8s.io/cli-utils v0.25.0
 	sigs.k8s.io/controller-runtime v0.9.0
 )
