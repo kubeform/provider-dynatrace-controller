@@ -25,8 +25,8 @@ require (
 	k8s.io/client-go v0.21.1
 	k8s.io/klog/v2 v2.8.0
 	kmodules.xyz/client-go v0.0.0-20210822203828-5e9cebbf1dfa
-	kubeform.dev/apimachinery v0.0.0-20210629153539-7bcd34a30eb5
-	kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824075850-0caf9fafccfc
+	kubeform.dev/apimachinery v0.0.0-20210824104859-ba5604d5a1cc
+	kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824193448-847310bec3ae
 	sigs.k8s.io/cli-utils v0.25.0
 	sigs.k8s.io/controller-runtime v0.9.0
 )

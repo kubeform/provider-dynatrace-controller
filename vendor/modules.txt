@@ -955,10 +955,11 @@ kmodules.xyz/resource-metadata/hub
 kmodules.xyz/resource-metadata/hub/resourceclasses
 kmodules.xyz/resource-metadata/hub/resourcedescriptors
 kmodules.xyz/resource-metadata/pkg/graph
-# kubeform.dev/apimachinery v0.0.0-20210629153539-7bcd34a30eb5
+# kubeform.dev/apimachinery v0.0.0-20210824104859-ba5604d5a1cc
 ## explicit
 kubeform.dev/apimachinery/api/v1alpha1
-# kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824075850-0caf9fafccfc
+kubeform.dev/apimachinery/pkg/util
+# kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824193448-847310bec3ae
 ## explicit
 kubeform.dev/provider-dynatrace-api/api/provider
 kubeform.dev/provider-dynatrace-api/apis/alerting
@@ -1004,7 +1005,6 @@ kubeform.dev/provider-dynatrace-api/apis/slo/v1alpha1
 kubeform.dev/provider-dynatrace-api/apis/span
 kubeform.dev/provider-dynatrace-api/apis/span/v1alpha1
 kubeform.dev/provider-dynatrace-api/client/clientset/versioned/scheme
-kubeform.dev/provider-dynatrace-api/util
 # sigs.k8s.io/cli-utils v0.25.0
 ## explicit
 sigs.k8s.io/cli-utils/pkg/kstatus/status
