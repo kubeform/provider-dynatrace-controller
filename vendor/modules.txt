@@ -959,7 +959,7 @@ kmodules.xyz/resource-metadata/pkg/graph
 ## explicit
 kubeform.dev/apimachinery/api/v1alpha1
 kubeform.dev/apimachinery/pkg/util
-# kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824193448-847310bec3ae
+# kubeform.dev/provider-dynatrace-api v0.3.1-0.20210824195238-909a03b58080
 ## explicit
 kubeform.dev/provider-dynatrace-api/api/provider
 kubeform.dev/provider-dynatrace-api/apis/alerting
