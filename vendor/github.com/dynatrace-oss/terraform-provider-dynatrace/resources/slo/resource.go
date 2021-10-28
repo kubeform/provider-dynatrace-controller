@@ -19,8 +19,7 @@ package slo
 
 import (
 	"context"
-	"log"
-	"os"
+	"strings"
 	"time"
 
 	"github.com/dtcookie/dynatrace/api/config/v2/slo"
@@ -40,7 +39,7 @@ func Resource() *schema.Resource {
 		Schema:        hcl2sdk.Convert(new(slo.SLO).Schema()),
 		CreateContext: logging.Enable(Create),
 		UpdateContext: logging.Enable(Update),
-		ReadContext:   logging.Enable(Read),
+		ReadContext:   logging.Enable(Read0),
 		DeleteContext: logging.Enable(Delete),
 		Importer:      &schema.ResourceImporter{StateContext: schema.ImportStatePassthroughContext},
 	}
@@ -67,10 +66,20 @@ func Create(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Dia
 		return diag.FromErr(err)
 	}
 	d.SetId(id)
-	if os.Getenv("DYNATRACE_DEBUG") == "true" {
-		time.Sleep(10000)
+	notFound := true
+	for notFound {
+		dd := Read0(ctx, d, m)
+		if len(dd) > 0 {
+			if strings.Contains(dd[0].Summary, "not found") {
+				notFound = true
+			} else {
+				return dd
+			}
+		} else {
+			notFound = false
+		}
 	}
-	return Read(ctx, d, m)
+	return diag.Diagnostics{}
 }
 
 // Update expects the configuration within the given ResourceData and send them to the Dynatrace Server in order to update that resource
@@ -83,10 +92,32 @@ func Update(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Dia
 		return diag.FromErr(err)
 	}
 	if err := NewService(m).Update(d.Id(), config); err != nil {
-		log.Println("Resource: " + err.Error())
 		return diag.FromErr(err)
 	}
 	return Read(ctx, d, m)
+}
+
+func Read0(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
+	retries := 0
+	notFound := true
+	for notFound {
+		dd := Read(ctx, d, m)
+		if len(dd) > 0 {
+			if strings.Contains(dd[0].Summary, "not found") {
+				notFound = true
+				retries = retries + 1
+				time.Sleep(time.Second * 5)
+				if retries > 10 {
+					return dd
+				}
+			} else {
+				return dd
+			}
+		} else {
+			return dd
+		}
+	}
+	return diag.Diagnostics{}
 }
 
 // Read queries the Dynatrace Server for the configuration
@@ -110,14 +141,5 @@ func Delete(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Dia
 	if err := NewService(m).Delete(d.Id()); err != nil {
 		return diag.FromErr(err)
 	}
-	// time.Sleep(5000)
-	// var cnt = 0
-	// _, err := NewService(m).Get(d.Id())
-	// for err == nil && cnt < 10 {
-	// 	time.Sleep(5000)
-	// 	_, err = NewService(m).Get(d.Id())
-	// 	cnt = cnt + 1
-	// }
-
 	return diag.Diagnostics{}
 }

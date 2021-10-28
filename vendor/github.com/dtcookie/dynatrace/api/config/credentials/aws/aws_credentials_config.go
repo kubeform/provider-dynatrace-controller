@@ -61,7 +61,6 @@ func (awscc *AWSCredentialsConfig) Schema() map[string]*hcl.Schema {
 			Type:        hcl.TypeList,
 			Description: "supporting services to be monitored",
 			Optional:    true,
-			MaxItems:    10,
 			Elem: &hcl.Resource{
 				Schema: new(AWSSupportingServiceConfig).Schema(),
 			},

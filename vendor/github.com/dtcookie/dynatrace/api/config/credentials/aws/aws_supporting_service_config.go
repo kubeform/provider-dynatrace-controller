@@ -24,7 +24,6 @@ func (assc *AWSSupportingServiceConfig) Schema() map[string]*hcl.Schema {
 			Type:        hcl.TypeList,
 			Description: "a list of metrics to be monitored for this service",
 			Optional:    true,
-			MaxItems:    10,
 			Elem: &hcl.Resource{
 				Schema: new(AWSSupportingServiceMetric).Schema(),
 			},

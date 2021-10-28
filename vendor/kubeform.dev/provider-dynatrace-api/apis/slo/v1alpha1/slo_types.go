@@ -72,10 +72,14 @@ type SloSpecResource struct {
 	// The entity filter for the SLO evaluation. Use the [syntax of entity selector](https://dt-url.net/entityselector)
 	// +optional
 	Filter *string `json:"filter,omitempty" tf:"filter"`
+	// The percentage-based metric expression for the calculation of the SLO
+	// +optional
+	MetricExpression *string `json:"metricExpression,omitempty" tf:"metric_expression"`
 	// The name of the rule
 	Name *string `json:"name" tf:"name"`
 	// The metric for the count of successes (the numerator in rate calculation)
 	// +optional
+	// Deprecated
 	Numerator *string `json:"numerator,omitempty" tf:"numerator"`
 	// The percentage-based metric for the calculation of the SLO
 	// +optional

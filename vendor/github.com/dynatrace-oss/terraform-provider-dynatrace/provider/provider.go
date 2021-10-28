@@ -29,12 +29,16 @@ import (
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/anomalies/hosts"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/anomalies/metrics"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/anomalies/services"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/applications/mobile"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/autotags"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/credentials/aws"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/credentials/azure"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/credentials/k8s"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/credentials/vault"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/customservices"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/dashboards"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/dashboards/sharing"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/environments"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/maintenance"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/metrics/calculated/service"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/mgmz"
@@ -44,10 +48,13 @@ import (
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/notifications"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/requestattributes"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/slo"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/attributes"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/capture"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/ctxprop"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/entrypoints"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/resattr"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/synthetic/locations"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/synthetic/monitors"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -78,9 +85,24 @@ func Provider() *schema.Provider {
 				Sensitive:   true,
 				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"DYNATRACE_API_TOKEN", "DT_API_TOKEN"}, nil),
 			},
+			"dt_cluster_api_token": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"DYNATRACE_CLUSTER_API_TOKEN", "DT_CLUSTER_API_TOKEN"}, nil),
+			},
+			"dt_cluster_url": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Sensitive:   true,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{"DYNATRACE_CLUSTER_URL", "DT_CLUSTER_URL"}, nil),
+			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"dynatrace_alerting_profiles": alerting.DataSource(),
+			"dynatrace_alerting_profiles":   alerting.DataSource(),
+			"dynatrace_credentials":         vault.DataSource(),
+			"dynatrace_synthetic_locations": locations.DataSource(),
+			"dynatrace_synthetic_location":  locations.UniqueDataSource(),
 		},
 		ResourcesMap: map[string]*schema.Resource{
 			"dynatrace_custom_service":            customservices.Resource(),
@@ -109,6 +131,14 @@ func Provider() *schema.Provider {
 			"dynatrace_span_capture_rule":         capture.Resource(),
 			"dynatrace_span_context_propagation":  ctxprop.Resource(),
 			"dynatrace_resource_attributes":       resattr.Resource(),
+			"dynatrace_span_attribute":            attributes.Resource(),
+			// "dynatrace_api_token":                 tokens.Resource(),
+			"dynatrace_dashboard_sharing":  sharing.Resource(),
+			"dynatrace_environment":        environments.Resource(),
+			"dynatrace_mobile_application": mobile.Resource(),
+			// "dynatrace_credentials":        vault.Resource(),
+			"dynatrace_browser_monitor": monitors.BrowserResource(),
+			"dynatrace_http_monitor":    monitors.HTTPResource(),
 		},
 		ConfigureContextFunc: config.ProviderConfigure,
 	}

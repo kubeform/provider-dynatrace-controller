@@ -80,7 +80,6 @@ type CredentialsSpecSupportingServicesToMonitorMonitoredMetrics struct {
 type CredentialsSpecSupportingServicesToMonitor struct {
 	// a list of metrics to be monitored for this service
 	// +optional
-	// +kubebuilder:validation:MaxItems=10
 	MonitoredMetrics []CredentialsSpecSupportingServicesToMonitorMonitoredMetrics `json:"monitoredMetrics,omitempty" tf:"monitored_metrics"`
 	// the name of the supporting service
 	// +optional
@@ -128,7 +127,6 @@ type CredentialsSpecResource struct {
 	PartitionType *string `json:"partitionType" tf:"partition_type"`
 	// supporting services to be monitored
 	// +optional
-	// +kubebuilder:validation:MaxItems=10
 	SupportingServicesToMonitor []CredentialsSpecSupportingServicesToMonitor `json:"supportingServicesToMonitor,omitempty" tf:"supporting_services_to_monitor"`
 	// Monitor only resources which have specified AWS tags (`true`) or all resources (`false`)
 	TaggedOnly *bool `json:"taggedOnly" tf:"tagged_only"`

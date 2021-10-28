@@ -85,6 +85,9 @@ type CredentialsSpecResource struct {
 	// The URL of the Kubernetes API server.  It must be unique within a Dynatrace environment.  The URL must valid according to RFC 2396. Leading or trailing whitespaces are not allowed.
 	// +optional
 	EndpointURL *string `json:"endpointURL,omitempty" tf:"endpoint_url"`
+	// Event analysis and alerting is (`true`) or disabled (`false`) for the Kubernetes cluster. If the field is omitted during an update, the old value remains unaffected.
+	// +optional
+	EventAnalysisAndAlertingEnabled *bool `json:"eventAnalysisAndAlertingEnabled,omitempty" tf:"event_analysis_and_alerting_enabled"`
 	// The check of SSL certificates is enabled (`true`) or disabled (`false`) for the Kubernetes cluster.  If not set on creation, the `true` value is used.  If the field is omitted during an update, the old value remains unaffected.
 	// +optional
 	EventsFieldSelectors []CredentialsSpecEventsFieldSelectors `json:"eventsFieldSelectors,omitempty" tf:"events_field_selectors"`

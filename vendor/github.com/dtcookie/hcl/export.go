@@ -76,6 +76,15 @@ func (e *exportEntries) eval(key string, value interface{}) {
 		}
 		entry := &primitiveEntry{Key: key, Value: value}
 		*e = append(*e, entry)
+	case map[string]interface{}:
+		if len(v) == 0 {
+			return
+		}
+		entry := &resourceEntry{Key: key, Entries: exportEntries{}}
+		for xk, xv := range v {
+			entry.Entries = append(entry.Entries, &primitiveEntry{Key: xk, Value: xv})
+		}
+		*e = append(*e, entry)
 	default:
 		rv := reflect.ValueOf(v)
 		switch rv.Kind() {
@@ -134,13 +143,25 @@ type primitiveEntry struct {
 	Value  interface{}
 }
 
-func jsonenc(v interface{}) string {
+func jsonenc(v interface{}, indent string) string {
+	switch rv := v.(type) {
+	case string:
+		if strings.Contains(rv, "\n") {
+			return "<<-EOT\n" + indent + "  " + strings.ReplaceAll(rv, "\n", "\n"+indent+"  ") + "\n" + indent + "EOT"
+		}
+	case *string:
+		erv := *rv
+		if strings.Contains(erv, "\n") {
+			return "<<-EOT\n" + indent + "  " + strings.ReplaceAll(erv, "\n", "\n"+indent+"  ") + "\n" + indent + "EOT"
+		}
+	default:
+	}
 	bytes, _ := json.Marshal(v)
 	return string(bytes)
 }
 
 func (pe *primitiveEntry) Write(w io.Writer, indent string) error {
-	_, err := w.Write([]byte(fmt.Sprintf("%s%v = %v", indent, pe.Key, jsonenc(pe.Value))))
+	_, err := w.Write([]byte(fmt.Sprintf("%s%v = %v", indent, pe.Key, jsonenc(pe.Value, indent))))
 	return err
 }
 

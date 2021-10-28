@@ -51,7 +51,10 @@ func (cs *ServiceClient) Update(config *AWSCredentialsConfig) error {
 	if len(opt.String(config.ID)) == 0 {
 		return errors.New("the configuration doesn't contain an ID")
 	}
-	if _, err := cs.client.PUT(fmt.Sprintf("/aws/credentials/%s", opt.String(config.ID)), config, 204); err != nil {
+	var localConfig AWSCredentialsConfig
+	localConfig = *config
+	localConfig.ID = nil
+	if _, err := cs.client.PUT(fmt.Sprintf("/aws/credentials/%s", opt.String(config.ID)), &localConfig, 204); err != nil {
 		return err
 	}
 	return nil

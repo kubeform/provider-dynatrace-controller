@@ -15,7 +15,7 @@ import (
 // MetricEvent The configuration of the metric event.
 type MetricEvent struct {
 	ID                  *string                     `json:"id,omitempty"`                  // The ID of the metric event.
-	MetricID            string                      `json:"metricId"`                      // The ID of the metric evaluated by the metric event.
+	MetricID            *string                     `json:"metricId"`                      // The ID of the metric evaluated by the metric event.
 	AggregationType     *AggregationType            `json:"aggregationType,omitempty"`     // How the metric data points are aggregated for the evaluation.   The timeseries must support this aggregation.
 	Description         string                      `json:"description"`                   // The description of the metric event.
 	Name                string                      `json:"name"`                          // The name of the metric event displayed in the UI.
@@ -27,6 +27,7 @@ type MetricEvent struct {
 	MonitoringStrategy  strategy.MonitoringStrategy `json:"monitoringStrategy"`            // A monitoring strategy for a metric event config. This is the base version of the monitoring strategy, depending on the type,  the actual JSON may contain additional fields.
 	PrimaryDimensionKey *string                     `json:"primaryDimensionKey,omitempty"` // Defines which dimension key should be used for the **alertingScope**.
 	Severity            *Severity                   `json:"severity,omitempty"`            // The type of the event to trigger on the threshold violation.  The `CUSTOM_ALERT` type is not correlated with other alerts. The `INFO` type does not open a problem.
+	MetricSelector      *string                     `json:"metricSelector,omitempty"`      // The metric selector that should be executed
 	Metadata            *api.ConfigMetadata         `json:"metadata,omitempty"`            // Metadata useful for debugging
 	Unknowns            map[string]json.RawMessage  `json:"-"`
 }
@@ -34,9 +35,10 @@ type MetricEvent struct {
 func (me *MetricEvent) Schema() map[string]*hcl.Schema {
 	return map[string]*hcl.Schema{
 		"metric_id": {
-			Type:        hcl.TypeString,
-			Required:    true,
-			Description: "The ID of the metric evaluated by the metric event",
+			Type:          hcl.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{"metric_selector"},
+			Description:   "The ID of the metric evaluated by the metric event",
 		},
 		"name": {
 			Type:        hcl.TypeString,
@@ -49,9 +51,16 @@ func (me *MetricEvent) Schema() map[string]*hcl.Schema {
 			Description: "The description of the metric event",
 		},
 		"aggregation_type": {
-			Type:        hcl.TypeString,
-			Optional:    true,
-			Description: "How the metric data points are aggregated for the evaluation. The timeseries must support this aggregation",
+			Type:          hcl.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{"metric_selector"},
+			Description:   "How the metric data points are aggregated for the evaluation. The timeseries must support this aggregation",
+		},
+		"metric_selector": {
+			Type:          hcl.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{"metric_id", "scopes", "aggregation_type"},
+			Description:   "The metric selector that should be executed",
 		},
 		"warning_reason": {
 			Type:        hcl.TypeString,
@@ -75,10 +84,11 @@ func (me *MetricEvent) Schema() map[string]*hcl.Schema {
 			Description: "The metric event is enabled (`true`) or disabled (`false`)",
 		},
 		"scopes": {
-			Type:        hcl.TypeList,
-			Optional:    true,
-			Description: "Defines the scope of the metric event. Only one filter is allowed per filter type, except for tags, where up to 3 are allowed. The filters are combined by conjunction",
-			Elem:        &hcl.Resource{Schema: new(scope.AlertingScopes).Schema()},
+			Type:          hcl.TypeList,
+			ConflictsWith: []string{"metric_selector"},
+			Optional:      true,
+			Description:   "Defines the scope of the metric event. Only one filter is allowed per filter type, except for tags, where up to 3 are allowed. The filters are combined by conjunction",
+			Elem:          &hcl.Resource{Schema: new(scope.AlertingScopes).Schema()},
 		},
 		"strategy": {
 			Type:        hcl.TypeList,
@@ -115,7 +125,12 @@ func (me *MetricEvent) MarshalHCL(decoder hcl.Decoder) (map[string]interface{}, 
 		}
 		result["unknowns"] = string(data)
 	}
-	result["metric_id"] = me.MetricID
+	if me.MetricSelector != nil {
+		result["metric_selector"] = me.MetricSelector
+	}
+	if me.MetricID != nil {
+		result["metric_id"] = *me.MetricID
+	}
 	result["name"] = me.Name
 	result["description"] = me.Description
 	if me.AggregationType != nil {
@@ -181,13 +196,18 @@ func (me *MetricEvent) UnmarshalHCL(decoder hcl.Decoder) error {
 		delete(me.Unknowns, "primaryDimensionKey")
 		delete(me.Unknowns, "severity")
 		delete(me.Unknowns, "metadata")
+		delete(me.Unknowns, "metric_selector")
 
 		if len(me.Unknowns) == 0 {
 			me.Unknowns = nil
 		}
 	}
+
+	if value, ok := decoder.GetOk("metric_selector"); ok {
+		me.MetricSelector = opt.NewString(value.(string))
+	}
 	if value, ok := decoder.GetOk("metric_id"); ok {
-		me.MetricID = value.(string)
+		me.MetricID = opt.NewString(value.(string))
 	}
 	if value, ok := decoder.GetOk("name"); ok {
 		me.Name = value.(string)
@@ -252,6 +272,7 @@ func (me *MetricEvent) MarshalJSON() ([]byte, error) {
 		"alertingScope":       me.AlertingScope,
 		"monitoringStrategy":  me.MonitoringStrategy,
 		"metadata":            me.Metadata,
+		"metricSelector":      me.MetricSelector,
 	}); err != nil {
 		return nil, err
 	}
@@ -279,6 +300,7 @@ func (me *MetricEvent) UnmarshalJSON(data []byte) error {
 		"alertingScope":       &me.AlertingScope,
 		"monitoringStrategy":  &wrapper,
 		"metadata":            &me.Metadata,
+		"metricSelector":      &me.MetricSelector,
 	}); err != nil {
 		return err
 	}

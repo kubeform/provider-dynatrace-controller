@@ -26,15 +26,19 @@ import (
 	autotagv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/autotag/v1alpha1"
 	awsv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/aws/v1alpha1"
 	azurev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/azure/v1alpha1"
+	browserv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/browser/v1alpha1"
 	calculatedv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/calculated/v1alpha1"
 	customv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/custom/v1alpha1"
 	dashboardv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/dashboard/v1alpha1"
 	databasev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/database/v1alpha1"
 	diskv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/disk/v1alpha1"
+	environmentv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/environment/v1alpha1"
 	hostv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/host/v1alpha1"
+	httpv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/http/v1alpha1"
 	k8sv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/k8s/v1alpha1"
 	maintenancev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/maintenance/v1alpha1"
 	managementv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/management/v1alpha1"
+	mobilev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/mobile/v1alpha1"
 	notificationv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/notification/v1alpha1"
 	processgroupv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/processgroup/v1alpha1"
 	requestv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/request/v1alpha1"
@@ -93,6 +97,14 @@ var (
 			ResourceType: "dynatrace_azure_credentials",
 		},
 		{
+			Group:    "browser.dynatrace.kubeform.com",
+			Version:  "v1alpha1",
+			Resource: "monitors",
+		}: {
+			JsonIt:       controllers.GetJSONItr(browserv1alpha1.GetEncoder(), browserv1alpha1.GetDecoder()),
+			ResourceType: "dynatrace_browser_monitor",
+		},
+		{
 			Group:    "calculated.dynatrace.kubeform.com",
 			Version:  "v1alpha1",
 			Resource: "servicemetrics",
@@ -125,6 +137,14 @@ var (
 			ResourceType: "dynatrace_dashboard",
 		},
 		{
+			Group:    "dashboard.dynatrace.kubeform.com",
+			Version:  "v1alpha1",
+			Resource: "sharings",
+		}: {
+			JsonIt:       controllers.GetJSONItr(dashboardv1alpha1.GetEncoder(), dashboardv1alpha1.GetDecoder()),
+			ResourceType: "dynatrace_dashboard_sharing",
+		},
+		{
 			Group:    "database.dynatrace.kubeform.com",
 			Version:  "v1alpha1",
 			Resource: "anomalies",
@@ -141,6 +161,14 @@ var (
 			ResourceType: "dynatrace_disk_anomalies",
 		},
 		{
+			Group:    "environment.dynatrace.kubeform.com",
+			Version:  "v1alpha1",
+			Resource: "environments",
+		}: {
+			JsonIt:       controllers.GetJSONItr(environmentv1alpha1.GetEncoder(), environmentv1alpha1.GetDecoder()),
+			ResourceType: "dynatrace_environment",
+		},
+		{
 			Group:    "host.dynatrace.kubeform.com",
 			Version:  "v1alpha1",
 			Resource: "anomalies",
@@ -155,6 +183,14 @@ var (
 		}: {
 			JsonIt:       controllers.GetJSONItr(hostv1alpha1.GetEncoder(), hostv1alpha1.GetDecoder()),
 			ResourceType: "dynatrace_host_naming",
+		},
+		{
+			Group:    "http.dynatrace.kubeform.com",
+			Version:  "v1alpha1",
+			Resource: "monitors",
+		}: {
+			JsonIt:       controllers.GetJSONItr(httpv1alpha1.GetEncoder(), httpv1alpha1.GetDecoder()),
+			ResourceType: "dynatrace_http_monitor",
 		},
 		{
 			Group:    "k8s.dynatrace.kubeform.com",
@@ -179,6 +215,14 @@ var (
 		}: {
 			JsonIt:       controllers.GetJSONItr(managementv1alpha1.GetEncoder(), managementv1alpha1.GetDecoder()),
 			ResourceType: "dynatrace_management_zone",
+		},
+		{
+			Group:    "mobile.dynatrace.kubeform.com",
+			Version:  "v1alpha1",
+			Resource: "applications",
+		}: {
+			JsonIt:       controllers.GetJSONItr(mobilev1alpha1.GetEncoder(), mobilev1alpha1.GetDecoder()),
+			ResourceType: "dynatrace_mobile_application",
 		},
 		{
 			Group:    "notification.dynatrace.kubeform.com",
@@ -235,6 +279,14 @@ var (
 		}: {
 			JsonIt:       controllers.GetJSONItr(slov1alpha1.GetEncoder(), slov1alpha1.GetDecoder()),
 			ResourceType: "dynatrace_slo",
+		},
+		{
+			Group:    "span.dynatrace.kubeform.com",
+			Version:  "v1alpha1",
+			Resource: "attributes",
+		}: {
+			JsonIt:       controllers.GetJSONItr(spanv1alpha1.GetEncoder(), spanv1alpha1.GetDecoder()),
+			ResourceType: "dynatrace_span_attribute",
 		},
 		{
 			Group:    "span.dynatrace.kubeform.com",

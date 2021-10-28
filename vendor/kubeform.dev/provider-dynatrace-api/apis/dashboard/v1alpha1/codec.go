@@ -38,6 +38,8 @@ func GetEncoder() map[string]jsoniter.ValEncoder {
 		jsoniter.MustGetKind(reflect2.TypeOf(DashboardSpecTileFilterConfigChartConfig{}).Type1()):     DashboardSpecTileFilterConfigChartConfigCodec{},
 		jsoniter.MustGetKind(reflect2.TypeOf(DashboardSpecTileFilterConfigFilters{}).Type1()):         DashboardSpecTileFilterConfigFiltersCodec{},
 		jsoniter.MustGetKind(reflect2.TypeOf(DashboardSpecTileVisualizationConfig{}).Type1()):         DashboardSpecTileVisualizationConfigCodec{},
+		jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPermissions{}).Type1()):                       SharingSpecPermissionsCodec{},
+		jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPublic{}).Type1()):                            SharingSpecPublicCodec{},
 	}
 }
 
@@ -54,6 +56,8 @@ func GetDecoder() map[string]jsoniter.ValDecoder {
 		jsoniter.MustGetKind(reflect2.TypeOf(DashboardSpecTileFilterConfigChartConfig{}).Type1()):     DashboardSpecTileFilterConfigChartConfigCodec{},
 		jsoniter.MustGetKind(reflect2.TypeOf(DashboardSpecTileFilterConfigFilters{}).Type1()):         DashboardSpecTileFilterConfigFiltersCodec{},
 		jsoniter.MustGetKind(reflect2.TypeOf(DashboardSpecTileVisualizationConfig{}).Type1()):         DashboardSpecTileVisualizationConfigCodec{},
+		jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPermissions{}).Type1()):                       SharingSpecPermissionsCodec{},
+		jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPublic{}).Type1()):                            SharingSpecPublicCodec{},
 	}
 }
 
@@ -935,5 +939,163 @@ func (DashboardSpecTileVisualizationConfigCodec) Decode(ptr unsafe.Pointer, iter
 		}
 	default:
 		iter.ReportError("decode DashboardSpecTileVisualizationConfig", "unexpected JSON type")
+	}
+}
+
+// +k8s:deepcopy-gen=false
+type SharingSpecPermissionsCodec struct {
+}
+
+func (SharingSpecPermissionsCodec) IsEmpty(ptr unsafe.Pointer) bool {
+	return (*SharingSpecPermissions)(ptr) == nil
+}
+
+func (SharingSpecPermissionsCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+	obj := (*SharingSpecPermissions)(ptr)
+	var objs []SharingSpecPermissions
+	if obj != nil {
+		objs = []SharingSpecPermissions{*obj}
+	}
+
+	jsonit := jsoniter.Config{
+		EscapeHTML:             true,
+		SortMapKeys:            true,
+		ValidateJsonRawMessage: true,
+		TagKey:                 "tf",
+		TypeEncoders:           getEncodersWithout(jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPermissions{}).Type1())),
+	}.Froze()
+
+	byt, _ := jsonit.Marshal(objs)
+
+	stream.Write(byt)
+}
+
+func (SharingSpecPermissionsCodec) Decode(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+	switch iter.WhatIsNext() {
+	case jsoniter.NilValue:
+		iter.Skip()
+		*(*SharingSpecPermissions)(ptr) = SharingSpecPermissions{}
+		return
+	case jsoniter.ArrayValue:
+		objsByte := iter.SkipAndReturnBytes()
+		if len(objsByte) > 0 {
+			var objs []SharingSpecPermissions
+
+			jsonit := jsoniter.Config{
+				EscapeHTML:             true,
+				SortMapKeys:            true,
+				ValidateJsonRawMessage: true,
+				TagKey:                 "tf",
+				TypeDecoders:           getDecodersWithout(jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPermissions{}).Type1())),
+			}.Froze()
+			jsonit.Unmarshal(objsByte, &objs)
+
+			if len(objs) > 0 {
+				*(*SharingSpecPermissions)(ptr) = objs[0]
+			} else {
+				*(*SharingSpecPermissions)(ptr) = SharingSpecPermissions{}
+			}
+		} else {
+			*(*SharingSpecPermissions)(ptr) = SharingSpecPermissions{}
+		}
+	case jsoniter.ObjectValue:
+		objByte := iter.SkipAndReturnBytes()
+		if len(objByte) > 0 {
+			var obj SharingSpecPermissions
+
+			jsonit := jsoniter.Config{
+				EscapeHTML:             true,
+				SortMapKeys:            true,
+				ValidateJsonRawMessage: true,
+				TagKey:                 "tf",
+				TypeDecoders:           getDecodersWithout(jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPermissions{}).Type1())),
+			}.Froze()
+			jsonit.Unmarshal(objByte, &obj)
+
+			*(*SharingSpecPermissions)(ptr) = obj
+		} else {
+			*(*SharingSpecPermissions)(ptr) = SharingSpecPermissions{}
+		}
+	default:
+		iter.ReportError("decode SharingSpecPermissions", "unexpected JSON type")
+	}
+}
+
+// +k8s:deepcopy-gen=false
+type SharingSpecPublicCodec struct {
+}
+
+func (SharingSpecPublicCodec) IsEmpty(ptr unsafe.Pointer) bool {
+	return (*SharingSpecPublic)(ptr) == nil
+}
+
+func (SharingSpecPublicCodec) Encode(ptr unsafe.Pointer, stream *jsoniter.Stream) {
+	obj := (*SharingSpecPublic)(ptr)
+	var objs []SharingSpecPublic
+	if obj != nil {
+		objs = []SharingSpecPublic{*obj}
+	}
+
+	jsonit := jsoniter.Config{
+		EscapeHTML:             true,
+		SortMapKeys:            true,
+		ValidateJsonRawMessage: true,
+		TagKey:                 "tf",
+		TypeEncoders:           getEncodersWithout(jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPublic{}).Type1())),
+	}.Froze()
+
+	byt, _ := jsonit.Marshal(objs)
+
+	stream.Write(byt)
+}
+
+func (SharingSpecPublicCodec) Decode(ptr unsafe.Pointer, iter *jsoniter.Iterator) {
+	switch iter.WhatIsNext() {
+	case jsoniter.NilValue:
+		iter.Skip()
+		*(*SharingSpecPublic)(ptr) = SharingSpecPublic{}
+		return
+	case jsoniter.ArrayValue:
+		objsByte := iter.SkipAndReturnBytes()
+		if len(objsByte) > 0 {
+			var objs []SharingSpecPublic
+
+			jsonit := jsoniter.Config{
+				EscapeHTML:             true,
+				SortMapKeys:            true,
+				ValidateJsonRawMessage: true,
+				TagKey:                 "tf",
+				TypeDecoders:           getDecodersWithout(jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPublic{}).Type1())),
+			}.Froze()
+			jsonit.Unmarshal(objsByte, &objs)
+
+			if len(objs) > 0 {
+				*(*SharingSpecPublic)(ptr) = objs[0]
+			} else {
+				*(*SharingSpecPublic)(ptr) = SharingSpecPublic{}
+			}
+		} else {
+			*(*SharingSpecPublic)(ptr) = SharingSpecPublic{}
+		}
+	case jsoniter.ObjectValue:
+		objByte := iter.SkipAndReturnBytes()
+		if len(objByte) > 0 {
+			var obj SharingSpecPublic
+
+			jsonit := jsoniter.Config{
+				EscapeHTML:             true,
+				SortMapKeys:            true,
+				ValidateJsonRawMessage: true,
+				TagKey:                 "tf",
+				TypeDecoders:           getDecodersWithout(jsoniter.MustGetKind(reflect2.TypeOf(SharingSpecPublic{}).Type1())),
+			}.Froze()
+			jsonit.Unmarshal(objByte, &obj)
+
+			*(*SharingSpecPublic)(ptr) = obj
+		} else {
+			*(*SharingSpecPublic)(ptr) = SharingSpecPublic{}
+		}
+	default:
+		iter.ReportError("decode SharingSpecPublic", "unexpected JSON type")
 	}
 }
