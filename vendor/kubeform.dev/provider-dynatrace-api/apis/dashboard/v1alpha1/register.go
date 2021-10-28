@@ -58,6 +58,8 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&Dashboard{},
 		&DashboardList{},
+		&Sharing{},
+		&SharingList{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,

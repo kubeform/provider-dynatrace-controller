@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/dtcookie/dynatrace/rest"
 	"github.com/dtcookie/dynatrace/rest/credentials"
@@ -36,19 +36,38 @@ func (cs *ServiceClient) Create(item *SLO) (string, error) {
 	post := cs.client.NewPOST("/slo", item)
 	post = post.Customize(func(resp *http.Response) {
 		location := resp.Header.Get("Location")
-		log.Println("Location: " + location)
+		// log.Println("Location: " + location)
 		if len(location) > 0 {
 			parts := strings.Split(location, "/")
-			log.Println(fmt.Sprintf("len(parts): %d", len(parts)))
+			// log.Println(fmt.Sprintf("len(parts): %d", len(parts)))
 			if len(parts) > 0 {
 				id = parts[len(parts)-1]
-				log.Println("id: " + id)
+				// log.Println("id: " + id)
 			}
 		}
 	}).Expect(201)
 	if _, err = post.Send(); err != nil {
 		return id, err
 	}
+	length := 0
+	var bytes []byte
+	for length == 0 {
+		if bytes, err = cs.client.GET(fmt.Sprintf("/slo?sloSelector=id(\"%s\")&pageSize=10000&sort=name&timeFrame=CURRENT&pageIdx=1&demo=false&evaluate=false", id), 200); err != nil {
+			return id, err
+		}
+		var slos sloList
+		if err = json.Unmarshal(bytes, &slos); err != nil {
+			return id, err
+		}
+		length = len(slos.SLOs)
+		if length == 0 {
+			time.Sleep(time.Second * 2)
+		}
+		for _, stub := range slos.SLOs {
+			item.Timeframe = stub.Timeframe
+		}
+	}
+
 	return id, nil
 }
 
@@ -87,16 +106,23 @@ func (cs *ServiceClient) Get(id string) (*SLO, error) {
 	if err = json.Unmarshal(bytes, &item); err != nil {
 		return nil, err
 	}
+	length := 0
 
-	if bytes, err = cs.client.GET(fmt.Sprintf("/slo?sloSelector=id(\"%s\")&pageSize=10000&sort=name&timeFrame=CURRENT&pageIdx=1&demo=false&evaluate=false", id), 200); err != nil {
-		return nil, err
-	}
-	var slos sloList
-	if err = json.Unmarshal(bytes, &slos); err != nil {
-		return nil, err
-	}
-	for _, stub := range slos.SLOs {
-		item.Timeframe = stub.Timeframe
+	for length == 0 {
+		if bytes, err = cs.client.GET(fmt.Sprintf("/slo?sloSelector=id(\"%s\")&pageSize=10000&sort=name&timeFrame=CURRENT&pageIdx=1&demo=false&evaluate=false", id), 200); err != nil {
+			return nil, err
+		}
+		var slos sloList
+		if err = json.Unmarshal(bytes, &slos); err != nil {
+			return nil, err
+		}
+		length = len(slos.SLOs)
+		if length == 0 {
+			time.Sleep(time.Second * 2)
+		}
+		for _, stub := range slos.SLOs {
+			item.Timeframe = stub.Timeframe
+		}
 	}
 
 	return &item, nil

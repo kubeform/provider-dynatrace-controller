@@ -180,6 +180,11 @@ func (in *CredentialsSpecResource) DeepCopyInto(out *CredentialsSpecResource) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.EventAnalysisAndAlertingEnabled != nil {
+		in, out := &in.EventAnalysisAndAlertingEnabled, &out.EventAnalysisAndAlertingEnabled
+		*out = new(bool)
+		**out = **in
+	}
 	if in.EventsFieldSelectors != nil {
 		in, out := &in.EventsFieldSelectors, &out.EventsFieldSelectors
 		*out = make([]CredentialsSpecEventsFieldSelectors, len(*in))

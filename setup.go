@@ -44,15 +44,19 @@ import (
 	autotagv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/autotag/v1alpha1"
 	awsv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/aws/v1alpha1"
 	azurev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/azure/v1alpha1"
+	browserv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/browser/v1alpha1"
 	calculatedv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/calculated/v1alpha1"
 	customv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/custom/v1alpha1"
 	dashboardv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/dashboard/v1alpha1"
 	databasev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/database/v1alpha1"
 	diskv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/disk/v1alpha1"
+	environmentv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/environment/v1alpha1"
 	hostv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/host/v1alpha1"
+	httpv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/http/v1alpha1"
 	k8sv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/k8s/v1alpha1"
 	maintenancev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/maintenance/v1alpha1"
 	managementv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/management/v1alpha1"
+	mobilev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/mobile/v1alpha1"
 	notificationv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/notification/v1alpha1"
 	processgroupv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/processgroup/v1alpha1"
 	requestv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/request/v1alpha1"
@@ -65,15 +69,19 @@ import (
 	controllersautotag "kubeform.dev/provider-dynatrace-controller/controllers/autotag"
 	controllersaws "kubeform.dev/provider-dynatrace-controller/controllers/aws"
 	controllersazure "kubeform.dev/provider-dynatrace-controller/controllers/azure"
+	controllersbrowser "kubeform.dev/provider-dynatrace-controller/controllers/browser"
 	controllerscalculated "kubeform.dev/provider-dynatrace-controller/controllers/calculated"
 	controllerscustom "kubeform.dev/provider-dynatrace-controller/controllers/custom"
 	controllersdashboard "kubeform.dev/provider-dynatrace-controller/controllers/dashboard"
 	controllersdatabase "kubeform.dev/provider-dynatrace-controller/controllers/database"
 	controllersdisk "kubeform.dev/provider-dynatrace-controller/controllers/disk"
+	controllersenvironment "kubeform.dev/provider-dynatrace-controller/controllers/environment"
 	controllershost "kubeform.dev/provider-dynatrace-controller/controllers/host"
+	controllershttp "kubeform.dev/provider-dynatrace-controller/controllers/http"
 	controllersk8s "kubeform.dev/provider-dynatrace-controller/controllers/k8s"
 	controllersmaintenance "kubeform.dev/provider-dynatrace-controller/controllers/maintenance"
 	controllersmanagement "kubeform.dev/provider-dynatrace-controller/controllers/management"
+	controllersmobile "kubeform.dev/provider-dynatrace-controller/controllers/mobile"
 	controllersnotification "kubeform.dev/provider-dynatrace-controller/controllers/notification"
 	controllersprocessgroup "kubeform.dev/provider-dynatrace-controller/controllers/processgroup"
 	controllersrequest "kubeform.dev/provider-dynatrace-controller/controllers/request"
@@ -353,6 +361,23 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 			return err
 		}
 	case schema.GroupVersionKind{
+		Group:   "browser.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Monitor",
+	}:
+		if err := (&controllersbrowser.MonitorReconciler{
+			Client:   mgr.GetClient(),
+			Log:      ctrl.Log.WithName("controllers").WithName("Monitor"),
+			Scheme:   mgr.GetScheme(),
+			Gvk:      gvk,
+			Provider: _provider,
+			Resource: _provider.ResourcesMap["dynatrace_browser_monitor"],
+			TypeName: "dynatrace_browser_monitor",
+		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Monitor")
+			return err
+		}
+	case schema.GroupVersionKind{
 		Group:   "calculated.dynatrace.kubeform.com",
 		Version: "v1alpha1",
 		Kind:    "ServiceMetric",
@@ -421,6 +446,23 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 			return err
 		}
 	case schema.GroupVersionKind{
+		Group:   "dashboard.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Sharing",
+	}:
+		if err := (&controllersdashboard.SharingReconciler{
+			Client:   mgr.GetClient(),
+			Log:      ctrl.Log.WithName("controllers").WithName("Sharing"),
+			Scheme:   mgr.GetScheme(),
+			Gvk:      gvk,
+			Provider: _provider,
+			Resource: _provider.ResourcesMap["dynatrace_dashboard_sharing"],
+			TypeName: "dynatrace_dashboard_sharing",
+		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Sharing")
+			return err
+		}
+	case schema.GroupVersionKind{
 		Group:   "database.dynatrace.kubeform.com",
 		Version: "v1alpha1",
 		Kind:    "Anomalies",
@@ -455,6 +497,23 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 			return err
 		}
 	case schema.GroupVersionKind{
+		Group:   "environment.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Environment",
+	}:
+		if err := (&controllersenvironment.EnvironmentReconciler{
+			Client:   mgr.GetClient(),
+			Log:      ctrl.Log.WithName("controllers").WithName("Environment"),
+			Scheme:   mgr.GetScheme(),
+			Gvk:      gvk,
+			Provider: _provider,
+			Resource: _provider.ResourcesMap["dynatrace_environment"],
+			TypeName: "dynatrace_environment",
+		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Environment")
+			return err
+		}
+	case schema.GroupVersionKind{
 		Group:   "host.dynatrace.kubeform.com",
 		Version: "v1alpha1",
 		Kind:    "Anomalies",
@@ -486,6 +545,23 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 			TypeName: "dynatrace_host_naming",
 		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
 			setupLog.Error(err, "unable to create controller", "controller", "Naming")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "http.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Monitor",
+	}:
+		if err := (&controllershttp.MonitorReconciler{
+			Client:   mgr.GetClient(),
+			Log:      ctrl.Log.WithName("controllers").WithName("Monitor"),
+			Scheme:   mgr.GetScheme(),
+			Gvk:      gvk,
+			Provider: _provider,
+			Resource: _provider.ResourcesMap["dynatrace_http_monitor"],
+			TypeName: "dynatrace_http_monitor",
+		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Monitor")
 			return err
 		}
 	case schema.GroupVersionKind{
@@ -537,6 +613,23 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 			TypeName: "dynatrace_management_zone",
 		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
 			setupLog.Error(err, "unable to create controller", "controller", "Zone")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "mobile.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Application",
+	}:
+		if err := (&controllersmobile.ApplicationReconciler{
+			Client:   mgr.GetClient(),
+			Log:      ctrl.Log.WithName("controllers").WithName("Application"),
+			Scheme:   mgr.GetScheme(),
+			Gvk:      gvk,
+			Provider: _provider,
+			Resource: _provider.ResourcesMap["dynatrace_mobile_application"],
+			TypeName: "dynatrace_mobile_application",
+		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Application")
 			return err
 		}
 	case schema.GroupVersionKind{
@@ -661,6 +754,23 @@ func SetupManager(ctx context.Context, mgr manager.Manager, gvk schema.GroupVers
 	case schema.GroupVersionKind{
 		Group:   "span.dynatrace.kubeform.com",
 		Version: "v1alpha1",
+		Kind:    "Attribute",
+	}:
+		if err := (&controllersspan.AttributeReconciler{
+			Client:   mgr.GetClient(),
+			Log:      ctrl.Log.WithName("controllers").WithName("Attribute"),
+			Scheme:   mgr.GetScheme(),
+			Gvk:      gvk,
+			Provider: _provider,
+			Resource: _provider.ResourcesMap["dynatrace_span_attribute"],
+			TypeName: "dynatrace_span_attribute",
+		}).SetupWithManager(ctx, mgr, auditor, restrictToNamespace); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "Attribute")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
 		Kind:    "CaptureRule",
 	}:
 		if err := (&controllersspan.CaptureRuleReconciler{
@@ -765,6 +875,15 @@ func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 			return err
 		}
 	case schema.GroupVersionKind{
+		Group:   "browser.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Monitor",
+	}:
+		if err := (&browserv1alpha1.Monitor{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Monitor")
+			return err
+		}
+	case schema.GroupVersionKind{
 		Group:   "calculated.dynatrace.kubeform.com",
 		Version: "v1alpha1",
 		Kind:    "ServiceMetric",
@@ -801,6 +920,15 @@ func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 			return err
 		}
 	case schema.GroupVersionKind{
+		Group:   "dashboard.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Sharing",
+	}:
+		if err := (&dashboardv1alpha1.Sharing{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Sharing")
+			return err
+		}
+	case schema.GroupVersionKind{
 		Group:   "database.dynatrace.kubeform.com",
 		Version: "v1alpha1",
 		Kind:    "Anomalies",
@@ -819,6 +947,15 @@ func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 			return err
 		}
 	case schema.GroupVersionKind{
+		Group:   "environment.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Environment",
+	}:
+		if err := (&environmentv1alpha1.Environment{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Environment")
+			return err
+		}
+	case schema.GroupVersionKind{
 		Group:   "host.dynatrace.kubeform.com",
 		Version: "v1alpha1",
 		Kind:    "Anomalies",
@@ -834,6 +971,15 @@ func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 	}:
 		if err := (&hostv1alpha1.Naming{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Naming")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "http.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Monitor",
+	}:
+		if err := (&httpv1alpha1.Monitor{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Monitor")
 			return err
 		}
 	case schema.GroupVersionKind{
@@ -861,6 +1007,15 @@ func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 	}:
 		if err := (&managementv1alpha1.Zone{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Zone")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "mobile.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Application",
+	}:
+		if err := (&mobilev1alpha1.Application{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Application")
 			return err
 		}
 	case schema.GroupVersionKind{
@@ -924,6 +1079,15 @@ func SetupWebhook(mgr manager.Manager, gvk schema.GroupVersionKind) error {
 	}:
 		if err := (&slov1alpha1.Slo{}).SetupWebhookWithManager(mgr); err != nil {
 			setupLog.Error(err, "unable to create webhook", "webhook", "Slo")
+			return err
+		}
+	case schema.GroupVersionKind{
+		Group:   "span.dynatrace.kubeform.com",
+		Version: "v1alpha1",
+		Kind:    "Attribute",
+	}:
+		if err := (&spanv1alpha1.Attribute{}).SetupWebhookWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create webhook", "webhook", "Attribute")
 			return err
 		}
 	case schema.GroupVersionKind{

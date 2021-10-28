@@ -89,7 +89,7 @@ type AnomaliesSpecResource struct {
 	// Narrows the rule usage down to disks that run on hosts that themselves run on the specified host group
 	// +optional
 	HostGroupID *string `json:"hostGroupID,omitempty" tf:"host_group_id"`
-	// The metric to monitor
+	// The metric to monitor. Possible values are: `LOW_DISK_SPACE`, `LOW_INODES`, `READ_TIME_EXCEEDING` and `WRITE_TIME_EXCEEDING`
 	Metric *string `json:"metric" tf:"metric"`
 	// The name of the disk event rule
 	Name *string `json:"name" tf:"name"`

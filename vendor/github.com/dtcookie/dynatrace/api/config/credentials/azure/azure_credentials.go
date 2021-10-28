@@ -133,6 +133,12 @@ func (ac *AzureCredentials) MarshalJSON() ([]byte, error) {
 			return nil, err
 		}
 		m["monitorOnlyTagPairs"] = rawMessage
+	} else {
+		rawMessage, err := json.Marshal([]*CloudTag{})
+		if err != nil {
+			return nil, err
+		}
+		m["monitorOnlyTagPairs"] = rawMessage
 	}
 
 	if rawMessage, err := json.Marshal(opt.Bool(ac.Active)); err == nil {

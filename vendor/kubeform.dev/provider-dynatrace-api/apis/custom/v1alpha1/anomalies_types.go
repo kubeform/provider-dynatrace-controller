@@ -350,7 +350,11 @@ type AnomaliesSpecResource struct {
 	// The metric event is enabled (`true`) or disabled (`false`)
 	Enabled *bool `json:"enabled" tf:"enabled"`
 	// The ID of the metric evaluated by the metric event
-	MetricID *string `json:"metricID" tf:"metric_id"`
+	// +optional
+	MetricID *string `json:"metricID,omitempty" tf:"metric_id"`
+	// The metric selector that should be executed
+	// +optional
+	MetricSelector *string `json:"metricSelector,omitempty" tf:"metric_selector"`
 	// The name of the metric event displayed in the UI
 	Name *string `json:"name" tf:"name"`
 	// Defines which dimension key should be used for the **alertingScope**

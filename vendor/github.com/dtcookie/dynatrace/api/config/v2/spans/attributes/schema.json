@@ -1,0 +1,37 @@
+{
+  "dynatrace": "1",
+  "schemaId": "builtin:span-attribute",
+  "displayName": "Span attributes",
+  "description": "While Dynatrace automatically captures all OpenTracing and OpenTelemetry span attributes, it only stores span attribute values when the related keys are specified in the allow-list below. By omitting personal data you can meet your organization's privacy requirements and control the amount of stored monitoring data.",
+  "documentation": "",
+  "version": "0.0.4",
+  "multiObject": true,
+  "ordered": false,
+  "maxObjects": 100,
+  "allowedScopes": [
+    "environment"
+  ],
+  "enums": {},
+  "types": {},
+  "properties": {
+    "key": {
+      "displayName": "Key",
+      "description": "Key of the span attribute to store",
+      "documentation": "",
+      "type": "text",
+      "nullable": false,
+      "constraints": [
+        {
+          "type": "NOT_EMPTY"
+        },
+        {
+          "type": "LENGTH",
+          "maxLength": 200,
+          "minLength": 1
+        }
+      ],
+      "maxObjects": 1,
+      "default": ""
+    }
+  }
+}

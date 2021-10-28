@@ -144,6 +144,11 @@ func (in *SloSpecResource) DeepCopyInto(out *SloSpecResource) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.MetricExpression != nil {
+		in, out := &in.MetricExpression, &out.MetricExpression
+		*out = new(string)
+		**out = **in
+	}
 	if in.Name != nil {
 		in, out := &in.Name, &out.Name
 		*out = new(string)

@@ -67,7 +67,7 @@ func (me *AnomalyDetection) Schema() map[string]*hcl.Schema {
 		"metric": {
 			Type:        hcl.TypeString,
 			Required:    true,
-			Description: "The metric to monitor",
+			Description: "The metric to monitor. Possible values are: `LOW_DISK_SPACE`, `LOW_INODES`, `READ_TIME_EXCEEDING` and `WRITE_TIME_EXCEEDING`",
 		},
 		"tags": {
 			Type:        hcl.TypeList,

@@ -333,6 +333,11 @@ func (in *AnomaliesSpecResource) DeepCopyInto(out *AnomaliesSpecResource) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.MetricSelector != nil {
+		in, out := &in.MetricSelector, &out.MetricSelector
+		*out = new(string)
+		**out = **in
+	}
 	if in.Name != nil {
 		in, out := &in.Name, &out.Name
 		*out = new(string)

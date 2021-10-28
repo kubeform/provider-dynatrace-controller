@@ -13,6 +13,7 @@ type SLO struct {
 	Description       *string `json:"customDescription,omitempty"` // The custom description of the SLO (optional)
 	UseRateMetric     bool    `json:"useRateMetric"`               // The type of the metric to use for SLO calculation: \n\n* `true`: An existing percentage-based metric. \n* `false`: A ratio of two metrics. \n\nFor a list of available metrics, see [Built-in metric page](https://dt-url.net/be03kow) or try the [GET metrics](https://dt-url.net/8e43kxf) API call
 	MetricRate        *string `json:"metricRate,omitempty"`        // The percentage-based metric for the calculation of the SLO. \n\nRequired when the **useRateMetric** is set to `true`
+	MetricExpression  *string `json:"metricExpression,omitempty"`  // The percentage-based metric expression for the calculation of the SLO
 	MetricNumerator   *string `json:"metricNumerator,omitempty"`   // The metric for the count of successes (the numerator in rate calculation). \n\nRequired when the **useRateMetric** is set to `false`
 	MetricDenominator *string `json:"metricDenominator,omitempty"` // The total count metric (the denominator in rate calculation). \n\nRequired when the **useRateMetric** is set to `false`
 	EvaluationType    string  `json:"evaluationType"`              // The evaluation type of the SLO. Currently only `AGGREGATE` is supported
@@ -34,6 +35,11 @@ func (me *SLO) Schema() map[string]*hcl.Schema {
 			Optional:    true,
 			Description: "The custom description of the SLO (optional)",
 		},
+		"metric_expression": {
+			Type:        hcl.TypeString,
+			Optional:    true,
+			Description: "The percentage-based metric expression for the calculation of the SLO",
+		},
 		"disabled": {
 			Type:        hcl.TypeBool,
 			Optional:    true,
@@ -50,6 +56,7 @@ func (me *SLO) Schema() map[string]*hcl.Schema {
 			Optional:      true,
 			RequiredWith:  []string{"denominator"},
 			ConflictsWith: []string{"rate"},
+			Deprecated:    "`numerator` and `denominator` have been replaced by `metric_expression`",
 			Description:   "The metric for the count of successes (the numerator in rate calculation)",
 		},
 		"denominator": {
@@ -101,17 +108,18 @@ func (me *SLO) MarshalHCL() (map[string]interface{}, error) {
 	properties := hcl.Properties{}
 
 	res, err := properties.EncodeAll(map[string]interface{}{
-		"name":        me.Name,
-		"description": me.Description,
-		"disabled":    !me.Enabled,
-		"rate":        empty2Nil(me.MetricRate),
-		"numerator":   empty2Nil(me.MetricNumerator),
-		"denominator": empty2Nil(me.MetricDenominator),
-		"evaluation":  me.EvaluationType,
-		"filter":      me.Filter,
-		"target":      me.Target,
-		"warning":     me.Warning,
-		"timeframe":   me.Timeframe,
+		"name":              me.Name,
+		"description":       me.Description,
+		"disabled":          !me.Enabled,
+		"rate":              empty2Nil(me.MetricRate),
+		"metric_expression": empty2Nil(me.MetricExpression),
+		"numerator":         empty2Nil(me.MetricNumerator),
+		"denominator":       empty2Nil(me.MetricDenominator),
+		"evaluation":        me.EvaluationType,
+		"filter":            me.Filter,
+		"target":            me.Target,
+		"warning":           me.Warning,
+		"timeframe":         me.Timeframe,
 	})
 	if err != nil {
 		return nil, err
@@ -155,22 +163,24 @@ func nonNil(s *string) *string {
 
 func (me *SLO) UnmarshalHCL(decoder hcl.Decoder) error {
 	err := decoder.DecodeAll(map[string]interface{}{
-		"name":        &me.Name,
-		"description": &me.Description,
-		"disabled":    &me.Enabled,
-		"rate":        &me.MetricRate,
-		"numerator":   &me.MetricNumerator,
-		"denominator": &me.MetricDenominator,
-		"evaluation":  &me.EvaluationType,
-		"filter":      &me.Filter,
-		"target":      &me.Target,
-		"warning":     &me.Warning,
-		"timeframe":   &me.Timeframe,
+		"name":              &me.Name,
+		"description":       &me.Description,
+		"disabled":          &me.Enabled,
+		"rate":              &me.MetricRate,
+		"numerator":         &me.MetricNumerator,
+		"metric_expression": &me.MetricExpression,
+		"denominator":       &me.MetricDenominator,
+		"evaluation":        &me.EvaluationType,
+		"filter":            &me.Filter,
+		"target":            &me.Target,
+		"warning":           &me.Warning,
+		"timeframe":         &me.Timeframe,
 	})
 	me.Enabled = !me.Enabled
 	me.MetricNumerator = nonNil(me.MetricNumerator)
 	me.MetricDenominator = nonNil(me.MetricDenominator)
 	me.MetricRate = nonNil(me.MetricRate)
+	// me.MetricExpression = nonNil(me.MetricExpression)
 	me.UseRateMetric = (me.MetricRate != nil) && len(*me.MetricRate) > 0
 	return err
 }

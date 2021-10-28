@@ -22,5 +22,9 @@ type DynatraceSpec struct {
 	// +optional
 	DtAPIToken *string `json:"-" sensitive:"true" tf:"dt_api_token"`
 	// +optional
+	DtClusterAPIToken *string `json:"-" sensitive:"true" tf:"dt_cluster_api_token"`
+	// +optional
+	DtClusterURL *string `json:"-" sensitive:"true" tf:"dt_cluster_url"`
+	// +optional
 	DtEnvURL *string `json:"dtEnvURL,omitempty" tf:"dt_env_url"`
 }
