@@ -346,6 +346,7 @@ type AnomaliesSpecResource struct {
 	Dimensions []AnomaliesSpecDimensions `json:"dimensions,omitempty" tf:"dimensions"`
 	// The reason of automatic disabling.  The `NONE` means config was not disabled automatically. Possible values are `METRIC_DEFINITION_INCONSISTENCY`, `NONE`, `TOO_MANY_DIMS` and `TOPX_FORCIBLY_DEACTIVATED`
 	// +optional
+	// Deprecated
 	DisabledReason *string `json:"disabledReason,omitempty" tf:"disabled_reason"`
 	// The metric event is enabled (`true`) or disabled (`false`)
 	Enabled *bool `json:"enabled" tf:"enabled"`
@@ -373,6 +374,7 @@ type AnomaliesSpecResource struct {
 	Unknowns *string `json:"unknowns,omitempty" tf:"unknowns"`
 	// The reason of a warning set on the config. The `NONE` means config has no warnings. The other supported value is `TOO_MANY_DIMS`
 	// +optional
+	// Deprecated
 	WarningReason *string `json:"warningReason,omitempty" tf:"warning_reason"`
 }
 

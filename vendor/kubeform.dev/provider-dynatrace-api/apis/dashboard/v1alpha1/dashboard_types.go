@@ -120,8 +120,7 @@ type DashboardSpecDashboardMetadata struct {
 	// the name of the dashboard
 	Name *string `json:"name" tf:"name"`
 	// the owner of the dashboard
-	// +optional
-	Owner *string `json:"owner,omitempty" tf:"owner"`
+	Owner *string `json:"owner" tf:"owner"`
 	// the dashboard is shared (`true`) or private (`false`)
 	// +optional
 	Shared *bool `json:"shared,omitempty" tf:"shared"`

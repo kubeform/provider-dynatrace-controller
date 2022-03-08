@@ -86,7 +86,7 @@ func (r *Anomalies) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	for key := range anomaliesForceNewList {
+	for key, _ := range anomaliesForceNewList {
 		keySplit := strings.Split(key, "/*")
 		length := len(keySplit)
 		checkIfAnyDif := false

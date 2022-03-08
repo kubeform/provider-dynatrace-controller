@@ -155,6 +155,11 @@ func (in *WindowSpecResource) DeepCopyInto(out *WindowSpecResource) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.Enabled != nil {
+		in, out := &in.Enabled, &out.Enabled
+		*out = new(bool)
+		**out = **in
+	}
 	if in.Metadata != nil {
 		in, out := &in.Metadata, &out.Metadata
 		*out = new(WindowSpecMetadata)
