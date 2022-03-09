@@ -68,7 +68,6 @@ type CredentialsSpecSupportingServicesMonitoredMetrics struct {
 type CredentialsSpecSupportingServices struct {
 	// A list of Azure tags to be monitored.  You can specify up to 10 tags. A resource tagged with *any* of the specified tags is monitored.  Only applicable when the **monitorOnlyTaggedEntities** parameter is set to `true`
 	// +optional
-	// +kubebuilder:validation:MaxItems=10
 	MonitoredMetrics []CredentialsSpecSupportingServicesMonitoredMetrics `json:"monitoredMetrics,omitempty" tf:"monitored_metrics"`
 	// The name of the supporting service.
 	// +optional
@@ -120,7 +119,6 @@ type CredentialsSpecResource struct {
 	MonitorOnlyTaggedEntities *bool `json:"monitorOnlyTaggedEntities" tf:"monitor_only_tagged_entities"`
 	// A list of Azure supporting services to be monitored. For each service there's a sublist of its metrics and the metrics' dimensions that should be monitored. All of these elements (services, metrics, dimensions) must have corresponding static definitions on the server.
 	// +optional
-	// +kubebuilder:validation:MaxItems=10
 	SupportingServices []CredentialsSpecSupportingServices `json:"supportingServices,omitempty" tf:"supporting_services"`
 	// Any attributes that aren't yet supported by this provider
 	// +optional

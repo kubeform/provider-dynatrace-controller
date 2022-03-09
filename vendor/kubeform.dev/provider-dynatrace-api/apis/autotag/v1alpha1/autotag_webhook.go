@@ -86,7 +86,7 @@ func (r *Autotag) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	for key := range autotagForceNewList {
+	for key, _ := range autotagForceNewList {
 		keySplit := strings.Split(key, "/*")
 		length := len(keySplit)
 		checkIfAnyDif := false

@@ -63,8 +63,10 @@ func (me *MetricEvent) Schema() map[string]*hcl.Schema {
 			Description:   "The metric selector that should be executed",
 		},
 		"warning_reason": {
-			Type:        hcl.TypeString,
-			Optional:    true,
+			Type:     hcl.TypeString,
+			Optional: true,
+
+			Deprecated:  "This property is not meant to be configured from the outside. It will get removed completely in future versions",
 			Description: "The reason of a warning set on the config. The `NONE` means config has no warnings. The other supported value is `TOO_MANY_DIMS`",
 		},
 		"dimensions": {
@@ -76,6 +78,7 @@ func (me *MetricEvent) Schema() map[string]*hcl.Schema {
 		"disabled_reason": {
 			Type:        hcl.TypeString,
 			Optional:    true,
+			Deprecated:  "This property is not meant to be configured from the outside. It will get removed completely in future versions",
 			Description: "The reason of automatic disabling.  The `NONE` means config was not disabled automatically. Possible values are `METRIC_DEFINITION_INCONSISTENCY`, `NONE`, `TOO_MANY_DIMS` and `TOPX_FORCIBLY_DEACTIVATED`",
 		},
 		"enabled": {
@@ -136,12 +139,12 @@ func (me *MetricEvent) MarshalHCL(decoder hcl.Decoder) (map[string]interface{}, 
 	if me.AggregationType != nil {
 		result["aggregation_type"] = string(*me.AggregationType)
 	}
-	if me.WarningReason != nil {
-		result["warning_reason"] = string(*me.WarningReason)
-	}
-	if me.DisabledReason != nil {
-		result["disabled_reason"] = string(*me.DisabledReason)
-	}
+	// if me.WarningReason != nil {
+	// 	result["warning_reason"] = string(*me.WarningReason)
+	// }
+	// if me.DisabledReason != nil {
+	// 	result["disabled_reason"] = string(*me.DisabledReason)
+	// }
 	result["enabled"] = me.Enabled
 	if me.PrimaryDimensionKey != nil {
 		result["primary_dimension_key"] = *me.PrimaryDimensionKey
@@ -218,9 +221,9 @@ func (me *MetricEvent) UnmarshalHCL(decoder hcl.Decoder) error {
 	if value, ok := decoder.GetOk("aggregation_type"); ok {
 		me.AggregationType = AggregationType(value.(string)).Ref()
 	}
-	if value, ok := decoder.GetOk("warning_reason"); ok {
-		me.WarningReason = WarningReason(value.(string)).Ref()
-	}
+	// if value, ok := decoder.GetOk("warning_reason"); ok {
+	// 	me.WarningReason = WarningReason(value.(string)).Ref()
+	// }
 	if value, ok := decoder.GetOk("enabled"); ok {
 		me.Enabled = value.(bool)
 	}
@@ -230,9 +233,9 @@ func (me *MetricEvent) UnmarshalHCL(decoder hcl.Decoder) error {
 	if value, ok := decoder.GetOk("severity"); ok {
 		me.Severity = Severity(value.(string)).Ref()
 	}
-	if value, ok := decoder.GetOk("disabled_reason"); ok {
-		me.DisabledReason = DisabledReason(value.(string)).Ref()
-	}
+	// if value, ok := decoder.GetOk("disabled_reason"); ok {
+	// 	me.DisabledReason = DisabledReason(value.(string)).Ref()
+	// }
 	if _, ok := decoder.GetOk("strategy.#"); ok {
 		cfg := new(strategy.Wrapper)
 		if err := cfg.UnmarshalHCL(hcl.NewDecoder(decoder, "strategy", 0)); err != nil {

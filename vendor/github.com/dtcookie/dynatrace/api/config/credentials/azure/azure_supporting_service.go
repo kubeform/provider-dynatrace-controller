@@ -25,7 +25,6 @@ func (ass *AzureSupportingService) Schema() map[string]*hcl.Schema {
 			Type:        hcl.TypeList,
 			Description: "A list of Azure tags to be monitored.  You can specify up to 10 tags. A resource tagged with *any* of the specified tags is monitored.  Only applicable when the **monitorOnlyTaggedEntities** parameter is set to `true`",
 			Optional:    true,
-			MaxItems:    10,
 			Elem: &hcl.Resource{
 				Schema: new(AzureMonitoredMetric).Schema(),
 			},

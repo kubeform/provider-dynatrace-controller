@@ -20,6 +20,7 @@ type Window struct {
 	Type                               WindowType                 `json:"type"`                                         // The type of the maintenance: planned or unplanned
 	SuppressSyntheticMonitorsExecution *bool                      `json:"suppressSyntheticMonitorsExecution,omitempty"` // Suppress execution of synthetic monitors during the maintenance
 	Metadata                           *api.ConfigMetadata        `json:"metadata,omitempty"`                           // Metadata useful for debugging
+	Enabled                            bool                       `json:"enabled"`
 	Unknowns                           map[string]json.RawMessage `json:"-"`
 }
 
@@ -61,6 +62,12 @@ func (me *Window) Schema() map[string]*hcl.Schema {
 		"suppress_synth_mon_exec": {
 			Type:        hcl.TypeBool,
 			Description: "Suppress execution of synthetic monitors during the maintenance",
+			Optional:    true,
+		},
+		"enabled": {
+			Type:        hcl.TypeBool,
+			Description: "The Maintenance Window is enabled or disabled",
+			Default:     true,
 			Optional:    true,
 		},
 		"description": {
@@ -110,6 +117,9 @@ func (me *Window) MarshalHCL() (map[string]interface{}, error) {
 	if me.SuppressSyntheticMonitorsExecution != nil {
 		result["suppress_synth_mon_exec"] = opt.Bool(me.SuppressSyntheticMonitorsExecution)
 	}
+	if !me.Enabled {
+		result["enabled"] = me.Enabled
+	}
 	if me.Scope != nil {
 		if marshalled, err := me.Scope.MarshalHCL(); err == nil {
 			result["scope"] = []interface{}{marshalled}
@@ -138,12 +148,18 @@ func (me *Window) UnmarshalHCL(decoder hcl.Decoder) error {
 		delete(me.Unknowns, "type")
 		delete(me.Unknowns, "metadata")
 		delete(me.Unknowns, "suppress_synth_mon_exec")
+		delete(me.Unknowns, "enabled")
 		if len(me.Unknowns) == 0 {
 			me.Unknowns = nil
 		}
 	}
 	if _, value := decoder.GetChange("suppress_synth_mon_exec"); value != nil {
 		me.SuppressSyntheticMonitorsExecution = opt.NewBool(value.(bool))
+	}
+	if _, value := decoder.GetChange("enabled"); value != nil {
+		me.Enabled = value.(bool)
+	} else {
+		me.Enabled = true
 	}
 	if value, ok := decoder.GetOk("name"); ok {
 		me.Name = value.(string)
@@ -181,6 +197,9 @@ func (me *Window) MarshalJSON() ([]byte, error) {
 	if err := m.Marshal("suppressSyntheticMonitorsExecution", me.SuppressSyntheticMonitorsExecution); err != nil {
 		return nil, err
 	}
+	if err := m.Marshal("enabled", me.Enabled); err != nil {
+		return nil, err
+	}
 	if err := m.Marshal("name", me.Name); err != nil {
 		return nil, err
 	}
@@ -214,6 +233,9 @@ func (me *Window) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	if err := m.Unmarshal("suppressSyntheticMonitorsExecution", &me.SuppressSyntheticMonitorsExecution); err != nil {
+		return err
+	}
+	if err := m.Unmarshal("enabled", &me.Enabled); err != nil {
 		return err
 	}
 	if err := m.Unmarshal("name", &me.Name); err != nil {

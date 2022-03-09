@@ -138,7 +138,8 @@ type ApplicationSpecResource struct {
 	// The URL of the beacon endpoint.
 	//
 	// Only applicable when the **beacon_endpoint_type** is set to `ENVIRONMENT_ACTIVE_GATE` or `INSTRUMENTED_WEB_SERVER`
-	BeaconEndpointURL *string `json:"beaconEndpointURL" tf:"beacon_endpoint_url"`
+	// +optional
+	BeaconEndpointURL *string `json:"beaconEndpointURL,omitempty" tf:"beacon_endpoint_url"`
 	// User Action names to be flagged as Key User Actions
 	// +optional
 	KeyUserActions []string `json:"keyUserActions,omitempty" tf:"key_user_actions"`

@@ -217,6 +217,8 @@ func (me Properties) EncodeAll(items map[string]interface{}) (Properties, error)
 	return me, nil
 }
 
+type StringSet []string
+
 func (me Properties) Encode(key string, v interface{}) error {
 	if v == nil {
 		return nil
@@ -292,9 +294,17 @@ func (me Properties) Encode(key string, v interface{}) error {
 			return nil
 		}
 		return me.Encode(key, *t)
+	case StringSet:
+		if len(t) > 0 {
+			me[key] = t
+		} else {
+			me[key] = nil
+		}
 	case []string:
 		if len(t) > 0 {
 			me[key] = t
+		} else {
+			me[key] = nil
 		}
 	case string:
 		me[key] = t

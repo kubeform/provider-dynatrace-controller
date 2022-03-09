@@ -37,7 +37,7 @@ func (me *DashboardMetadata) Schema() map[string]*hcl.Schema {
 		"owner": {
 			Type:        hcl.TypeString,
 			Description: "the owner of the dashboard",
-			Optional:    true,
+			Required:    true,
 		},
 		"sharing_details": {
 			Type:        hcl.TypeList,

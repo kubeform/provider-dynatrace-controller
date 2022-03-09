@@ -153,7 +153,7 @@ func (me *NewAppConfig) Schema() map[string]*hcl.Schema {
 		"beacon_endpoint_url": {
 			Type:        hcl.TypeString,
 			Description: "The URL of the beacon endpoint.\n\nOnly applicable when the **beacon_endpoint_type** is set to `ENVIRONMENT_ACTIVE_GATE` or `INSTRUMENTED_WEB_SERVER`",
-			Required:    true,
+			Optional:    true,
 		},
 		"key_user_actions": {
 			Type:        hcl.TypeSet,

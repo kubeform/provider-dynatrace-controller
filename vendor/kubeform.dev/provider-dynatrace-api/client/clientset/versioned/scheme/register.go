@@ -34,6 +34,7 @@ import (
 	hostv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/host/v1alpha1"
 	httpv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/http/v1alpha1"
 	k8sv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/k8s/v1alpha1"
+	keyv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/key/v1alpha1"
 	maintenancev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/maintenance/v1alpha1"
 	managementv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/management/v1alpha1"
 	mobilev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/mobile/v1alpha1"
@@ -44,6 +45,8 @@ import (
 	servicev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/service/v1alpha1"
 	slov1alpha1 "kubeform.dev/provider-dynatrace-api/apis/slo/v1alpha1"
 	spanv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/span/v1alpha1"
+	userv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/user/v1alpha1"
+	webv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/web/v1alpha1"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
@@ -71,6 +74,7 @@ var localSchemeBuilder = runtime.SchemeBuilder{
 	hostv1alpha1.AddToScheme,
 	httpv1alpha1.AddToScheme,
 	k8sv1alpha1.AddToScheme,
+	keyv1alpha1.AddToScheme,
 	maintenancev1alpha1.AddToScheme,
 	managementv1alpha1.AddToScheme,
 	mobilev1alpha1.AddToScheme,
@@ -81,6 +85,8 @@ var localSchemeBuilder = runtime.SchemeBuilder{
 	servicev1alpha1.AddToScheme,
 	slov1alpha1.AddToScheme,
 	spanv1alpha1.AddToScheme,
+	userv1alpha1.AddToScheme,
+	webv1alpha1.AddToScheme,
 }
 
 // AddToScheme adds all types of this clientset into the given scheme. This allows composition

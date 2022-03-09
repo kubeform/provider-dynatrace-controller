@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/dtcookie/dynatrace/api/config/metrics/calculated/service/propagation"
 	"github.com/dtcookie/hcl"
@@ -122,7 +121,6 @@ func (me *Placeholder) UnmarshalHCL(decoder hcl.Decoder) error {
 		"source":               &me.Source,
 		"unknowns":             &me.Unknowns,
 	})
-	log.Printf("normalization: %v", *me.Normalization)
 	return err
 }
 

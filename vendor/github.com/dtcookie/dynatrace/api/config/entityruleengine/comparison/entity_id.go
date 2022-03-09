@@ -2,9 +2,11 @@ package comparison
 
 import (
 	"encoding/json"
+	"log"
 
 	"github.com/dtcookie/dynatrace/api/config/entityruleengine/comparison/entity_id"
 	"github.com/dtcookie/hcl"
+	"github.com/dtcookie/opt"
 )
 
 // EntityID Comparison for `ENTITY_ID` attributes.
@@ -68,6 +70,7 @@ func (eic *EntityID) MarshalHCL() (map[string]interface{}, error) {
 }
 
 func (eic *EntityID) UnmarshalHCL(decoder hcl.Decoder) error {
+	log.Println("UnmarshalHCL")
 	if value, ok := decoder.GetOk("unknowns"); ok {
 		if err := json.Unmarshal([]byte(value.(string)), eic); err != nil {
 			return err
@@ -83,9 +86,10 @@ func (eic *EntityID) UnmarshalHCL(decoder hcl.Decoder) error {
 			eic.Unknowns = nil
 		}
 	}
-	if value, ok := decoder.GetOk("type"); ok {
-		eic.Type = ComparisonBasicType(value.(string))
+	if value, ok := decoder.GetOk("value"); ok {
+		eic.Value = opt.NewString(value.(string))
 	}
+	eic.Type = ComparisonBasicTypes.EntityID
 	if _, value := decoder.GetChange("negate"); value != nil {
 		eic.Negate = value.(bool)
 	}

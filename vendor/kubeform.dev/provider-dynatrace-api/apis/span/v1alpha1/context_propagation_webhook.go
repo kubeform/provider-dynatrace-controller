@@ -86,7 +86,7 @@ func (r *ContextPropagation) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	for key := range contextpropagationForceNewList {
+	for key, _ := range contextpropagationForceNewList {
 		keySplit := strings.Split(key, "/*")
 		length := len(keySplit)
 		checkIfAnyDif := false

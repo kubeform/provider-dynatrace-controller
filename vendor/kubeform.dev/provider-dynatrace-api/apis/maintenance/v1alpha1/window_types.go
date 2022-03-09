@@ -151,6 +151,9 @@ type WindowSpecResource struct {
 	// A short description of the maintenance purpose
 	// +optional
 	Description *string `json:"description,omitempty" tf:"description"`
+	// The Maintenance Window is enabled or disabled
+	// +optional
+	Enabled *bool `json:"enabled,omitempty" tf:"enabled"`
 	// `metadata` exists for backwards compatibility but shouldn't get specified anymore
 	// +optional
 	// Deprecated
