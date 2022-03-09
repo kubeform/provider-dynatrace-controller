@@ -100,6 +100,11 @@ func (me *CapturedMethod) UnmarshalHCL(decoder hcl.Decoder) error {
 	if value, ok := decoder.GetOk("capture"); ok {
 		me.Capture = Capture(value.(string))
 	}
+	if me.Capture == Captures.Argument {
+		if me.ArgumentIndex == nil {
+			me.ArgumentIndex = opt.NewInt32(0)
+		}
+	}
 	if value, ok := decoder.GetOk("deep_object_access"); ok {
 		me.DeepObjectAccess = opt.NewString(value.(string))
 	}

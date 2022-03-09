@@ -58,6 +58,10 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&Anomalies{},
 		&AnomaliesList{},
+		&DataPrivacy{},
+		&DataPrivacyList{},
+		&ErrorRules{},
+		&ErrorRulesList{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,

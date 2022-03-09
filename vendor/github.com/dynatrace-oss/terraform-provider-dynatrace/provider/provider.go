@@ -30,6 +30,9 @@ import (
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/anomalies/metrics"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/anomalies/services"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/applications/mobile"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/applications/web"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/applications/web/errorrules"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/applications/web/privacy"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/autotags"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/credentials/aws"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/credentials/azure"
@@ -39,6 +42,7 @@ import (
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/dashboards"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/dashboards/sharing"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/environments"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/keyrequests"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/maintenance"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/metrics/calculated/service"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/mgmz"
@@ -47,6 +51,7 @@ import (
 	servicenaming "github.com/dynatrace-oss/terraform-provider-dynatrace/resources/naming/services"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/notifications"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/requestattributes"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/requestnaming"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/slo"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/attributes"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/capture"
@@ -55,6 +60,8 @@ import (
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/spans/resattr"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/synthetic/locations"
 	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/synthetic/monitors"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/usergroups"
+	"github.com/dynatrace-oss/terraform-provider-dynatrace/resources/users"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -99,7 +106,8 @@ func Provider() *schema.Provider {
 			},
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"dynatrace_alerting_profiles":   alerting.DataSource(),
+			"dynatrace_alerting_profiles": alerting.DataSource(),
+			// "dynatrace_service":             dsservices.DataSource(),
 			"dynatrace_credentials":         vault.DataSource(),
 			"dynatrace_synthetic_locations": locations.DataSource(),
 			"dynatrace_synthetic_location":  locations.UniqueDataSource(),
@@ -132,13 +140,19 @@ func Provider() *schema.Provider {
 			"dynatrace_span_context_propagation":  ctxprop.Resource(),
 			"dynatrace_resource_attributes":       resattr.Resource(),
 			"dynatrace_span_attribute":            attributes.Resource(),
-			// "dynatrace_api_token":                 tokens.Resource(),
-			"dynatrace_dashboard_sharing":  sharing.Resource(),
-			"dynatrace_environment":        environments.Resource(),
-			"dynatrace_mobile_application": mobile.Resource(),
-			// "dynatrace_credentials":        vault.Resource(),
-			"dynatrace_browser_monitor": monitors.BrowserResource(),
-			"dynatrace_http_monitor":    monitors.HTTPResource(),
+			"dynatrace_dashboard_sharing":         sharing.Resource(),
+			"dynatrace_environment":               environments.Resource(),
+			"dynatrace_mobile_application":        mobile.Resource(),
+			"dynatrace_browser_monitor":           monitors.BrowserResource(),
+			"dynatrace_http_monitor":              monitors.HTTPResource(),
+			"dynatrace_web_application":           web.Resource(),
+			"dynatrace_application_data_privacy":  privacy.Resource(),
+			"dynatrace_application_error_rules":   errorrules.Resource(),
+			"dynatrace_request_naming":            requestnaming.Resource(),
+			"dynatrace_request_namings":           requestnaming.OrderResource(),
+			"dynatrace_user_group":                usergroups.Resource(),
+			"dynatrace_user":                      users.Resource(),
+			"dynatrace_key_requests":              keyrequests.Resource(),
 		},
 		ConfigureContextFunc: config.ProviderConfigure,
 	}

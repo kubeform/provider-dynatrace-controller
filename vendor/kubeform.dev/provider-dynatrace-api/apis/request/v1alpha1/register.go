@@ -58,6 +58,10 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 	scheme.AddKnownTypes(SchemeGroupVersion,
 		&Attribute{},
 		&AttributeList{},
+		&Naming{},
+		&NamingList{},
+		&Namings{},
+		&NamingsList{},
 	)
 
 	scheme.AddKnownTypes(SchemeGroupVersion,

@@ -164,6 +164,14 @@ func (d *decoder) decode(key string, v interface{}) (bool, error) {
 	}
 	if result, ok := d.GetOk(key); ok {
 		switch vActual := v.(type) {
+		case *StringSet:
+			set := result.(Set)
+			strs := StringSet{}
+			for _, elem := range set.List() {
+				strs = append(strs, elem.(string))
+			}
+			*vActual = strs
+			return true, nil
 		case *[]string:
 			set := result.(Set)
 			strs := []string{}

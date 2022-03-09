@@ -71,7 +71,7 @@ func (me *EntityID) MarshalJSON() ([]byte, error) {
 	properties := xjson.NewProperties(me.Unknowns)
 	if err := properties.MarshalAll(map[string]interface{}{
 		"filterType": me.GetType(),
-		"id":         me.EntityID,
+		"entityId":   me.EntityID,
 	}); err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (me *EntityID) UnmarshalJSON(data []byte) error {
 	}
 	if err := properties.UnmarshalAll(map[string]interface{}{
 		"filterType": &me.FilterType,
-		"id":         &me.EntityID,
+		"entityId":   &me.EntityID,
 	}); err != nil {
 		return err
 	}

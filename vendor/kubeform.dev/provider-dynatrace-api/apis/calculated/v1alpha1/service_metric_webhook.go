@@ -86,7 +86,7 @@ func (r *ServiceMetric) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	for key := range servicemetricForceNewList {
+	for key, _ := range servicemetricForceNewList {
 		keySplit := strings.Split(key, "/*")
 		length := len(keySplit)
 		checkIfAnyDif := false

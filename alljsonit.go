@@ -36,6 +36,7 @@ import (
 	hostv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/host/v1alpha1"
 	httpv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/http/v1alpha1"
 	k8sv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/k8s/v1alpha1"
+	keyv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/key/v1alpha1"
 	maintenancev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/maintenance/v1alpha1"
 	managementv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/management/v1alpha1"
 	mobilev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/mobile/v1alpha1"
@@ -46,6 +47,8 @@ import (
 	servicev1alpha1 "kubeform.dev/provider-dynatrace-api/apis/service/v1alpha1"
 	slov1alpha1 "kubeform.dev/provider-dynatrace-api/apis/slo/v1alpha1"
 	spanv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/span/v1alpha1"
+	userv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/user/v1alpha1"
+	webv1alpha1 "kubeform.dev/provider-dynatrace-api/apis/web/v1alpha1"
 	"kubeform.dev/provider-dynatrace-controller/controllers"
 )
 
@@ -70,6 +73,22 @@ var allJsonIt = map[schema.GroupVersionResource]Data{
 	}: {
 		JsonIt:       controllers.GetJSONItr(applicationv1alpha1.GetEncoder(), applicationv1alpha1.GetDecoder()),
 		ResourceType: "dynatrace_application_anomalies",
+	},
+	{
+		Group:    "application.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "dataprivacies",
+	}: {
+		JsonIt:       controllers.GetJSONItr(applicationv1alpha1.GetEncoder(), applicationv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_application_data_privacy",
+	},
+	{
+		Group:    "application.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "errorrules",
+	}: {
+		JsonIt:       controllers.GetJSONItr(applicationv1alpha1.GetEncoder(), applicationv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_application_error_rules",
 	},
 	{
 		Group:    "autotag.dynatrace.kubeform.com",
@@ -200,6 +219,14 @@ var allJsonIt = map[schema.GroupVersionResource]Data{
 		ResourceType: "dynatrace_k8s_credentials",
 	},
 	{
+		Group:    "key.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "requests",
+	}: {
+		JsonIt:       controllers.GetJSONItr(keyv1alpha1.GetEncoder(), keyv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_key_requests",
+	},
+	{
 		Group:    "maintenance.dynatrace.kubeform.com",
 		Version:  "v1alpha1",
 		Resource: "windows",
@@ -246,6 +273,22 @@ var allJsonIt = map[schema.GroupVersionResource]Data{
 	}: {
 		JsonIt:       controllers.GetJSONItr(requestv1alpha1.GetEncoder(), requestv1alpha1.GetDecoder()),
 		ResourceType: "dynatrace_request_attribute",
+	},
+	{
+		Group:    "request.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "namings",
+	}: {
+		JsonIt:       controllers.GetJSONItr(requestv1alpha1.GetEncoder(), requestv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_request_naming",
+	},
+	{
+		Group:    "request.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "namings",
+	}: {
+		JsonIt:       controllers.GetJSONItr(requestv1alpha1.GetEncoder(), requestv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_request_namings",
 	},
 	{
 		Group:    "resource.dynatrace.kubeform.com",
@@ -310,6 +353,30 @@ var allJsonIt = map[schema.GroupVersionResource]Data{
 	}: {
 		JsonIt:       controllers.GetJSONItr(spanv1alpha1.GetEncoder(), spanv1alpha1.GetDecoder()),
 		ResourceType: "dynatrace_span_entry_point",
+	},
+	{
+		Group:    "user.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "users",
+	}: {
+		JsonIt:       controllers.GetJSONItr(userv1alpha1.GetEncoder(), userv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_user",
+	},
+	{
+		Group:    "user.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "groups",
+	}: {
+		JsonIt:       controllers.GetJSONItr(userv1alpha1.GetEncoder(), userv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_user_group",
+	},
+	{
+		Group:    "web.dynatrace.kubeform.com",
+		Version:  "v1alpha1",
+		Resource: "applications",
+	}: {
+		JsonIt:       controllers.GetJSONItr(webv1alpha1.GetEncoder(), webv1alpha1.GetDecoder()),
+		ResourceType: "dynatrace_web_application",
 	},
 }
 

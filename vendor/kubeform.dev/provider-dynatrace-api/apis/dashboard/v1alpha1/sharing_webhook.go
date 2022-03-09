@@ -86,7 +86,7 @@ func (r *Sharing) ValidateUpdate(old runtime.Object) error {
 		return err
 	}
 
-	for key := range sharingForceNewList {
+	for key, _ := range sharingForceNewList {
 		keySplit := strings.Split(key, "/*")
 		length := len(keySplit)
 		checkIfAnyDif := false

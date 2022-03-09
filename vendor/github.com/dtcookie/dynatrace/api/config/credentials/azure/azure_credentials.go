@@ -74,7 +74,6 @@ func (ac *AzureCredentials) Schema() map[string]*hcl.Schema {
 			Type:        hcl.TypeList,
 			Description: "A list of Azure supporting services to be monitored. For each service there's a sublist of its metrics and the metrics' dimensions that should be monitored. All of these elements (services, metrics, dimensions) must have corresponding static definitions on the server.",
 			Optional:    true,
-			MaxItems:    10,
 			Elem: &hcl.Resource{
 				Schema: new(AzureSupportingService).Schema(),
 			},
