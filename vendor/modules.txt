@@ -1457,7 +1457,7 @@ kmodules.xyz/resource-metrics/api
 ## explicit
 kubeform.dev/apimachinery/api/v1alpha1
 kubeform.dev/apimachinery/pkg/util
-# kubeform.dev/provider-dynatrace-api v0.4.1-0.20220310132708-7fe8fd6a2bac
+# kubeform.dev/provider-dynatrace-api v0.4.1-0.20220314083752-15f19a0d9101
 ## explicit
 kubeform.dev/provider-dynatrace-api/api/provider
 kubeform.dev/provider-dynatrace-api/apis/alerting
